@@ -331,9 +331,9 @@ Step2: 计算获胜神经元周围的神00.经元移动的系数，获胜的是1
 
 Step3: 神经元位置更新，用上面的系数 * 选中的city坐标-每个neuron坐标。
 
-Step4: 迭代多次，得到city-获胜神经元列表，计算路径。![](StudyDiary.assets/clip_image010.png)
+Step4: 迭代多次，得到city-获胜神经元列表，计算路径。
 
- 
+![](StudyDiary.assets/clip_image010.png)
 
 思考：
 
@@ -347,7 +347,7 @@ https://www.runoob.com/numpy/numpy-matplotlib.html
 
 https://www.runoob.com/w3cnote/matplotlib-tutorial.html
 
-### 静态图png
+### 静态图 png
 
 导入模块一般
 
