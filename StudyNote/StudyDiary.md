@@ -147,11 +147,11 @@ matlab默认的编码格式是GBK复制到文本里面中文乱码，feature('lo
 
 添加
 
-![img](file:///C:/Users/EE526/AppData/Local/Temp/msohtmlclip1/01/clip_image004.png)
+![](StudyDiary.assets/clip_image004.png)
 
 删除：
 
-![img](file:///C:/Users/EE526/AppData/Local/Temp/msohtmlclip1/01/clip_image005.png)
+![](StudyDiary.assets/clip_image005.png)
 
 还是不行，待解决
 
