@@ -2,7 +2,7 @@
 % all rights reverved
 
 clear all
-clc
+clc 
 close all
 
 
