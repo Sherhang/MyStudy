@@ -88,3 +88,11 @@ http://www.wanfangdata.com.cn/details/detail.do?_type=perio&id=bjhkhtdxxb2014020
 
 对巡航导弹的协同模式比较清楚。
 
+### 9.美国面向未来战争的导弹协同作战概念发展研究_赵鸿燕.
+
+[链接](https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFDTEMP&filename=HKBQ201904001&uid=WEEvREcwSlJHSldRa1FhcTdWa2FjR2F3UUxRd2RCUzlaVVFPMlJ0VmFHVT0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MjgyNDBGckNVUkxPZVorZHZGeTNoVTd2TUxTYkpmN0c0SDlqTXE0OUZaWVI4ZVgxTHV4WVM3RGgxVDNxVHJXTTE=)
+
+基本概念可以参考。导弹的任务规划概念，以及和其它相关研究的概念。
+
+
+
