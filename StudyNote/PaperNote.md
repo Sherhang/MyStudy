@@ -92,7 +92,11 @@ http://www.wanfangdata.com.cn/details/detail.do?_type=perio&id=bjhkhtdxxb2014020
 
 [链接](https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFDTEMP&filename=HKBQ201904001&uid=WEEvREcwSlJHSldRa1FhcTdWa2FjR2F3UUxRd2RCUzlaVVFPMlJ0VmFHVT0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MjgyNDBGckNVUkxPZVorZHZGeTNoVTd2TUxTYkpmN0c0SDlqTXE0OUZaWVI4ZVgxTHV4WVM3RGgxVDNxVHJXTTE=)
 
-基本概念可以参考。导弹的任务规划概念，以及和其它相关研究的概念。
+基本概念可以参考。导弹的任务规划概念，以及和其它相关研究的概念
 
+### 10.基于改进PSO的多UAV协同任务分配研究
 
+[link](https://kns.cnki.net/KCMS/detail/50.1213.TJ.20190920.1707.006.html?uid=WEEvREcwSlJHSldRa1FhdXNXaEhobmc4cTkrNjNTUzY2bGhCb3RsR0VQST0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MDYwNDhUM2ZscVdNMENMTDdSN3FlYnVkdkZ5amxWYjdMSTFvPUpqalRaN0c0SDlqTXBvMUZaT3NPWXc5TXptUm42ajU3)
+
+模型可以参考
 
