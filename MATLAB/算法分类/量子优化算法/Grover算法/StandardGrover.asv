@@ -7,4 +7,8 @@ t = 0.001:0.001:1;
 r = round(acos(sqrt(t))./(2*asin(sqrt(t))));
 %标准Grover算法的成功概率
 P = sin((2*r+1).*asin(sqrt(t))).^2;
-%
+%当t > 1/3且旋转相位为π/2时，经过一步迭代后算法的成功概率
+P1 = 4*t.^3-8*t.^2 + 5*t;
+plot(t, P,'r', t, P1,'b')
+legend("标准Grover算法","一步迭代");
+grid on
