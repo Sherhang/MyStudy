@@ -6,7 +6,7 @@ classdef MissileAndTarget
         numOfFighters; %载机数量
         numOfTargets; %目标数量
         numOfMissiles; %导弹总数量，
-        missileList; % 各个载机的导弹数量
+        missileList; % 各个载机的导弹数量,[1 2 1 2]表示1号载机有一个导弹，2号载机有两个
         targetValueList; % 各个目标的价值，价值高的进行多弹协同攻击
         
         Fighters; % 结构体，包含位置，速度，航向角弧度
@@ -16,7 +16,7 @@ classdef MissileAndTarget
     
     % 常量
     properties
-        dT = 0.02; % 采样时间0.01s
+        dT = 0.02; % 采样时间0.02s
         maxVOfMissile  = 1500; % 导弹最大速度
         maxVOfFighter = 300; % 载机最大速度 m/s
         maxVOfTarget = 300;
@@ -84,21 +84,7 @@ classdef MissileAndTarget
             obj.Missiles.v = obj.maxSpeedOfMissile * ones(obj.numOfMissiles,1);
             obj.Missiles.angle = obj.Fighters.angle(orderMissile,:) ;
         end
-        
-        % 计算载机和目标距离矩阵
-        function disMatrixOfFighterAndTarget = getDisMatrixOfFighterAndTarget(obj)
-            disMatrixOfFighterAndTarget = zeros(obj.numOfFighters, obj.numOfTargets);
-            for i = 1:obj.numOfFighters
-                for j = 1:obj.numOfTargets
-                    disMatrixOfFighterAndTarget(i,j) = sqrt(...
-                        (obj.Fighters.p(i,1)-obj.Targets.p(j,1))^2 ...
-                        +(obj.Fighters.p(i,2)-obj.Targets.p(j,2))^2 ...
-                        );
-                end
-            end
-        end
-        
-        
+
         % PNG 制导, 第一行目标序列，第二行导弹序列，2*n
         function obj = missileMoveByPNG(obj, plan)
             obj.Missiles.v = obj.maxVOfMissile*ones(obj.numOfMissiles,1);
@@ -148,8 +134,7 @@ classdef MissileAndTarget
                 end
             end
             
-            obj.Missiles.angle = r;
-            
+            obj.Missiles.angle = r;     
         end
         
         % 直接追踪法，载机接近目标,plan为固定目标顺序,2*n,第一行表示目标，第二行表示载机
@@ -212,8 +197,9 @@ classdef MissileAndTarget
                     dNewTheta = acos(dot(dVector, angleDestVector)/(norm(dVector)*norm(angleDestVector)));
                     eNewTheta = acos(dot(eVector, angleDestVector)/(norm(eVector)*norm(angleDestVector)));
                     if(dNewTheta < thetaAngle0WithAngleDest)
-                        theta(i) = d;
-                    else if (eNewTheta < thetaAngle0WithAngleDest)
+                        theta(i) = d;                   
+                    else
+                        if (eNewTheta < thetaAngle0WithAngleDest)
                             theta(i) = e;
                         end
                     end
@@ -247,6 +233,31 @@ classdef MissileAndTarget
                 obj.Targets.v .*obj.dT.*sin(obj.Targets.angle)];
         end
         
+         % 计算载机和目标距离矩阵
+        function disMatrixOfFighterAndTarget = getDisMatrixOfFighterAndTarget(obj)
+            disMatrixOfFighterAndTarget = zeros(obj.numOfFighters, obj.numOfTargets);
+            for i = 1:obj.numOfFighters
+                for j = 1:obj.numOfTargets
+                    disMatrixOfFighterAndTarget(i,j) = sqrt(...
+                        (obj.Fighters.p(i,1)-obj.Targets.p(j,1))^2 ...
+                        +(obj.Fighters.p(i,2)-obj.Targets.p(j,2))^2 ...
+                        );
+                end
+            end
+        end
+        
+        % 计算导弹和目标距离矩阵
+        function disMatrixOfMissileAndTarget = getDisMatrixOfMissileAndTarget(obj)
+            disMatrixOfMissileAndTarget = zeros(obj.numOfMissiles, obj.numOfTargets);
+            for i = 1:obj.numOfMissiles
+                for j = 1:obj.numOfTargets
+                    disMatrixOfMissileAndTarget(i,j) = sqrt(...
+                        (obj.Missiles.p(i,1)-obj.Targets.p(j,1))^2 ...
+                        +(obj.Missiles.p(i,2)-obj.Targets.p(j,2))^2 ...
+                        );
+                end
+            end
+        end
         
         
     end
