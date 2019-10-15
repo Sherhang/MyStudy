@@ -233,6 +233,7 @@ classdef MissileAndTarget
                 obj.Targets.v .*obj.dT.*sin(obj.Targets.angle)];
         end
         
+        % 优化建模
          % 计算载机和目标距离矩阵
         function disMatrixOfFighterAndTarget = getDisMatrixOfFighterAndTarget(obj)
             disMatrixOfFighterAndTarget = zeros(obj.numOfFighters, obj.numOfTargets);
