@@ -35,7 +35,7 @@ for t=1:steps
   %额外吸引
   ang4=F4(Pt(1),Pt(2),P);
   %总方向
-  
+    
   ang=ang1+(ang2+diag(w')*ang3)+10*ang4;
   %总方向单位化
  for i=1:m

@@ -8,7 +8,7 @@ missilePlan =[1 2 2 ; 1 2 4];
 for i=1:500
     model = fighterMove(model, plan);
     model = targetMove(model);
-    figure(1);
+    figure(1); 
     plot(model.Fighters.p(:,1), model.Fighters.p(:,2), 'g.');
     hold on;
     plot(model.Targets.p(:,1), model.Targets.p(:,2), 'b.');
