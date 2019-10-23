@@ -7,7 +7,7 @@ inertia = 0.5;   % 惯性因子
 selfw = 2.0;     % 自身因子
 globalw = 2.0;   % 全局因子
 mutatep = 0.05;  % 变异概率
-maxgen = 5000;    % 限定代数
+maxgen = 5000;   % 限定代数
 % -----------数组部分-----------------
 varrange = [-512 512; -512 512]; % 变量范围。varrange(1,2)表示第一变量的最大值
 % ----------粒子群位置初始化-------------
@@ -152,7 +152,7 @@ for gen = 1:maxgen
     if glofit < fitness(maxfitindex, bestchain)
         gloangle(1,:) = angle(maxfitindex, :);      % 获得全局最优相位
         glochrom(1,:,:) = chrom(maxfitindex,:,:);   % 初始化全局最优位置
-        glchromx(1,:,:) = chromx(maxfitindex,:,:);   % 初始化全局最优位置
+        glchromx(1,:,:) = chromx(maxfitindex,:,:);  % 初始化全局最优位置
         glofit = fitness(maxfitindex, bestchain);   % 获得全剧最大适应度
     end
     %---------------记录结果------------
