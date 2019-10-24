@@ -3,11 +3,11 @@ classdef MissileAndTarget
     % 模型
     % 位置角度等参数以及两个阶段的模型
     properties
-        numOfFighters; %载机数量
-        numOfTargets; %目标数量
-        numOfMissiles; %导弹总数量，
-        missileList; % 各个载机的导弹数量,[1 2 1 2]表示1号载机有一个导弹，2号载机有两个
-        targetList; % 各个目标需要的攻击导弹数量，[1,2,2,1]2号目标和3号目标需要2枚导弹
+        numOfFighters; % 载机数量
+        numOfTargets;  % 目标数量
+        numOfMissiles; % 导弹总数量，
+        missileList;   % 各个载机的导弹数量,[1 2 1 2]表示1号载机有一个导弹，2号载机有两个
+        targetList;    % 各个目标需要的攻击导弹数量，[1,2,2,1]2号目标和3号目标需要2枚导弹
         
         Fighters; % 结构体，包含位置，速度，航向角弧度
         Targets;
@@ -373,9 +373,19 @@ classdef MissileAndTarget
                     speedAdvance(i,j) = getSpeedAdvance(pv);
                 end
             end
-            %-----计算载机相对于目标的优势矩阵-----------
+            %-----计算导弹相对于目标的优势矩阵-----------
             f = 0.4*disAdvance + 0.3*speedAdvance...
                 + 0.3*angleAdvance.*inAngleAdvance;
+             % 目标序列，[1,2,2,3]表示2号目标需要两枚导弹攻击
+            k=1;orderTarget = ones(1,obj.numOfTargets);
+            for i=1:length(obj.targetList)
+                for j=1:obj.targetList(i)
+                    orderTarget(k) = i;
+                    k = k+1;
+                end
+            end
+            % 矩阵扩充、
+            f = f(:,orderTarget);
         end
         
         %---------------载机目标序列解码-----------
@@ -400,8 +410,8 @@ classdef MissileAndTarget
                 end
             end
             
-            orderTarget
-            orderMissile
+%             orderTarget
+%             orderMissile
             FTPlan = plan;
             for i=1:length(orderTarget)
                 if plan(1,i) ~= 0
@@ -442,8 +452,8 @@ classdef MissileAndTarget
                 end
             end
             
-            orderTarget
-            orderMissile
+%             orderTarget
+%             orderMissile
             MTPlan = plan;
             for i=1:length(orderTarget)
                 if plan(1,i) ~= 0
