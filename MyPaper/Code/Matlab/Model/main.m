@@ -1,10 +1,17 @@
-%import MissileAndTarget.*;
-model = MissileAndTarget(3,2,4);
+clear all;
+clc;
+model = MissileAndTarget(3,3,5);
 model = setRand(model);
 % x = get(model, 'pTargets')
+f1 = getOptmizeMatrixOfFighterAndTarget(model)
+f2 =  getOptmizeMatrixOfMissileAndTarget(model)
+% 载机计划
+plan = [1 2 3 4;  2 3 1 0]; % 按照矩阵直接计算的plan
+plan = decodePlanFightersToTargets(model, plan)
+% 导弹计划
+missilePlan = [1 2 3 4; 2 4 1 5];
+missilePlan = decodePlanMissilesToTargets(model,missilePlan)
 
-plan = [1 2 2;1 2 3];
-missilePlan =[1 2 2 ; 1 2 4];
 for i=1:500
     model = fighterMove(model, plan);
     model = targetMove(model);
