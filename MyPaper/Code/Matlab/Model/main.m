@@ -1,27 +1,22 @@
 clear all;
 clc;
-model = MissileAndTarget(3,3,5);
+model = MissileAndTarget(5,6,9);
 model = setRand(model);
 % x = get(model, 'pTargets')
 f1 = getOptmizeMatrixOfFighterAndTarget(model)
 f2 =  getOptmizeMatrixOfMissileAndTarget(model)
-% 载机任务计划
-plan = [1 2 3 0;  2 3 1 0]; % 按照矩阵直接计算的plan
-plan = decodePlanFightersToTargets(model, plan)
-% 导弹任务计划
-missilePlan = [1 2 3 4; 2 4 1 0];
-missilePlan = decodePlanMissilesToTargets(model,missilePlan)
+plan = [];missilePlan = [];
 
-for i=1:1000
+for i=1:500
     if rem(i,10)==0
-        oldplan = plan;
+
         mat =  getOptmizeMatrixOfFighterAndTarget(model);
         plan = quantumMinAssign(max(max(mat))-mat);
         plan = decodePlanFightersToTargets(model, plan); % 解码
-        if plan ~= oldplan
-            oldplan
-            plan
-        end   
+%         if plan ~= oldplan
+%             oldplan
+%             plan
+%         end   
     end
     model = fighterMove(model, plan);
     model = targetMove(model);

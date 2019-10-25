@@ -173,7 +173,7 @@ classdef MissileAndTarget
             theta = atan2((nextP(:,2)-obj.Fighters.p(:,2)), nextP(:,1)-obj.Fighters.p(:,1));
             % 如果载机没有攻击目标，其它有目标方向的均值
             % 有目标的载机方向的均值
-            sumMeanTheta = 0; k = 0;
+            sumMeanTheta = 0; k = 0; meanTheta = 0;
             for i=1:obj.numOfFighters
                 if ~(fighterPlan(i,1)==0 && fighterPlan(i,2)==0)
                     sumMeanTheta = sumMeanTheta + theta(i);
