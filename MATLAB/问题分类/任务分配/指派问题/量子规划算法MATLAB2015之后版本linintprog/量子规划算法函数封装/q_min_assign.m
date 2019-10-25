@@ -27,20 +27,22 @@ ub=ones(n*n,1);%不等式约束右端
 % if n<=100
 %     options = optimoptions('linprog','Algorithm','active-set','Display','final')
 %     x=linprog(f,[],[],Aeq,beq,lb,ub,x0,options);
-% 
+%
 % else x=linprog(f,[],[],Aeq,beq,lb,ub);%默认内点法
 % end
 x=linprog(f,[],[],Aeq,beq,lb,ub);%默认内点法
 y=reshape(x,n,n);
 y=y';
 
-plan= gradualMax( y,n);%固定坍缩方案         
+plan= gradualMax( y,n);%固定坍缩方案
 end
-function [ plan ] = gradualMax( a,N)
+
+function [ plan ] = gradualMax(a,N)
 %UNTITLED2 此处显示有关此函数的摘要
 %   此处显示详细说明
+Msort = zeros(1,N);
+Tsort = zeros(1,N);
 for j=1:N
-    
     [row ,clo]=find(a==max(max(a)),1);
     Msort(j)=row;% 这一步是为了防止出现两个最大值，只要第一个
     Tsort(j)=clo;
@@ -48,6 +50,7 @@ for j=1:N
     a(:,Tsort(j))=0;
 end
 temp=sortrows([Msort',Tsort'],2);
-plan=temp(:,1)';
+plan(2,:) = temp(:,1)';
+plan(1,:) = 1:N;
 end
 
