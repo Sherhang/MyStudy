@@ -100,3 +100,27 @@ http://www.wanfangdata.com.cn/details/detail.do?_type=perio&id=bjhkhtdxxb2014020
 
 模型可以参考
 
+### 11空战多目标分配的指派模型
+
+[link](https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFD2008&filename=HJHK200801018&uid=WEEvREcwSlJHSldRa1Fhb09jT0lPd1RPclBETnBDQXhtZFBLUnZRNW50dz0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MTcwODZPZVorUnNGeS9uVTczTUxTZkRaYkc0SHRuTXJvOUViSVI4ZVgxTHV4WVM3RGgxVDNxVHJXTTFGckNVUkw=)
+
+态势模型，目前采用
+
+### 12反舰导弹协同任务规划系统研究
+
+李红亮  [link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFD2012&filename=FHDD201209009&uid=WEEvREdxOWJmbC9oM1NjYkcyQzZ4Q2Z0ZEhsTGppL3dSL2ZyakRPOHlBWlg=$R1yZ0H6jyaa0en3RxVUd8df-oHi7XMMDo7mtKT6mSmEvTuk11l2gFA!!&v=MDQ3NDRhckc0SDlQTXBvOUZiWVI4ZVgxTHV4WVM3RGgxVDNxVHJXTTFGckNVUkxPZVorUm5GeURtVUx2TEl5WFA= )
+
+预先规划，实时规划   概念和例子
+
+### 13.基于遗传算法的舰载机对海导弹攻击任务分配模型研究
+
+[link]( http://kns.cnki.net//KXReader/Detail?TIMESTAMP=637078877147601250&DBCODE=CJFQ&TABLEName=CJFD2012&FileName=JCKX201205029&RESULT=1&SIGN=LdcGX65XxtcDXl0qYHMFjIMW08A%3d )
+
+模型可以参考
+
+### 14. 目标大机动建模与空空导弹导引律设计 
+
+[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CMFD&dbname=CMFD201901&filename=1019800720.nh&uid=WEEvREcwSlJHSldRa1FhdkJkVG5heFhwejUyYmNkVDNmdW5YZzkxRzZnZz0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MDg1NzNDamtWTC9KVkYyNkY3dTRIdGJPcjVFYlBJUjhlWDFMdXhZUzdEaDFUM3FUcldNMUZyQ1VSTE9lWitSbkY= )
+
+硕士论文，可以参考载机规避导弹的机动形式 
+
