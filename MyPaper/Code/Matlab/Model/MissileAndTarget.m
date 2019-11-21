@@ -1,4 +1,4 @@
-
+ 
 classdef MissileAndTarget
     % 模型
     % 位置角度等参数以及两个阶段的模型
@@ -33,7 +33,7 @@ classdef MissileAndTarget
             obj.numOfMissiles = numOfMissiles;
         end
         
-        % 随机设置态势参数
+        % 随机设置态势参I
         function obj = setRand(obj)
             obj.Fighters.p =10000 * rand(obj.numOfFighters, 2);
             obj.Fighters.v = 400* ones(obj.numOfFighters, 1);

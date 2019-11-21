@@ -1,12 +1,26 @@
 %-------------态势函数图像------------------
 %--------距离函数-----
+%常量
+MaxDisOfRadar = 100*1000;     % 雷达最大搜索距离
+MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
+MinDisOfMissile = 10;         % 导弹最小攻击距离，小于此距离无法发射导弹
+MaxInescapableZone = 25*1000;  % 导弹的不可逃逸区外围
+MinInescapableZone = 15*1000;  % 导弹的不可逃逸区最小值
 for i=1:120*1000
     x(i) = i;
     y(i) = getDisAdvance(i);
 end
-figure(1);
+figure1 = figure('Color',[1 1 1]);
 plot(x,y,'r');
-title('载机的距离优势');
+text(MaxDisOfRadar,getDisAdvance(MaxDisOfRadar),'D_{Rmax}');   %注解加到坐标中的某个位置
+text(MaxDisOfMissile,getDisAdvance(MaxDisOfMissile),'D_{Mmax}'); 
+text(MinDisOfMissile,getDisAdvance(MinDisOfMissile),'D_{Mmin}'); 
+text(MaxInescapableZone,getDisAdvance(MaxInescapableZone),'D_{Imax}'); 
+text(MinInescapableZone,getDisAdvance(MinInescapableZone),'D_{Imin}'); 
+axis([0 120000 0 1.2]);
+xlabel('距离/m')
+ylabel('距离优势值')
+print(figure1,'-dpng','-r300','./png/disAdvance.png')   % 保存到工作目录下，名字为"a.png"
 %----------方位角函数----------
 clear all;
 k=1;
@@ -15,10 +29,11 @@ for i = 0:0.1:pi
     y(k) = getAngleAdvance(x(k));
     k = k +1;
 end
-figure(2);
+figure2 = figure('Color',[1 1 1]);
 plot(x*180/pi,y,'r');
 title('载机方位角优势');
-
+xlabel('距离/m')
+ylabel('')
 %----------进入角函数----------
 clear all;
 k=1;
@@ -27,7 +42,7 @@ for i = 0:0.1:pi
     y(k) = getInAngleAdvance(x(k));
     k = k +1;
 end
-figure(3);
+figure3 = figure('Color',[1 1 1]);
 plot(x*180/pi,y,'r');
 title('载机进入角优势');
 %----------速度函数--------
@@ -38,7 +53,7 @@ for i = 0:0.01:2
     y(k) = getSpeedAdvance(x(k));
     k = k+1;
 end
-figure(4);
+figure4 = figure('Color',[1 1 1]);
 plot(x,y,'r');
 title('速度优势');
 
@@ -49,8 +64,8 @@ function f = getDisAdvance(d)
 MaxDisOfRadar = 100*1000;     % 雷达最大搜索距离
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 MinDisOfMissile = 10;         % 导弹最小攻击距离，小于此距离无法发射导弹
-MaxInescapableZone = 5*1000;  % 导弹的不可逃逸区外围
-MinInescapableZone = 2*1000;  % 导弹的不可逃逸区最小值
+MaxInescapableZone = 25*1000;  % 导弹的不可逃逸区外围
+MinInescapableZone = 15*1000;  % 导弹的不可逃逸区最小值
 
 if d > MaxDisOfRadar          % 大于雷达搜索距离
      f = 0;
