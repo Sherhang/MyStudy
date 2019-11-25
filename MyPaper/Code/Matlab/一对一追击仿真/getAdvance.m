@@ -1,86 +1,34 @@
-%-------------态势函数图像------------------
-%--------距离函数-----
-%常量
-clear ;clc;
-MaxDisOfRadar = 100*1000;     % 雷达最大搜索距离
-MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
-MinDisOfMissile = 100;         % 导弹最小攻击距离，小于此距离无法发射导弹
-MaxInescapableZone = 25*1000;  % 导弹的不可逃逸区外围
-MinInescapableZone = 15*1000;  % 导弹的不可逃逸区最小值
-for i=1:120*1000
-    x(i) = i;
-    y(i) = getDisAdvance(i);
-end
-figure1 = figure('Color',[1 1 1]);
-plot(x,y,'r');
-text(MaxDisOfRadar,getDisAdvance(MaxDisOfRadar),'D_{Rmax}');   %注解加到坐标中的某个位置
-text(MaxDisOfMissile,getDisAdvance(MaxDisOfMissile),'D_{Mmax}'); 
-text(MinDisOfMissile,getDisAdvance(MinDisOfMissile),'D_{Mmin}'); 
-text(MaxInescapableZone,getDisAdvance(MaxInescapableZone),'D_{Imax}'); 
-text(MinInescapableZone,getDisAdvance(MinInescapableZone),'D_{Imin}'); 
-axis([0 120000 0 1.2]);
-xlabel('距离/m')
-ylabel('距离优势值')
-print(figure1,'-dpng','-r300','./png/disAdvance.png')   % 保存到工作目录下
-%----------方位角函数----------
-clear all;
-k=1;
-for i = 0:0.1:pi
-    x(k) = i;
-    y(k) = getAngleAdvance(x(k));
-    k = k +1;
-end
-figure2 = figure('Color',[1 1 1]);
-plot(x*180/pi,y,'r');
-xlabel('方位角/°')
-ylabel('态势优势值')
-%----------进入角函数----------
-clear all;
-k=1;
-for i = 0:0.1:pi
-    x(k) = i;
-    y(k) = getInAngleAdvance(x(k));
-    k = k +1;
-end
-figure3 = figure('Color',[1 1 1]);
-plot(x*180/pi,y,'r');
-ylabel('进入角/°')
-ylabel('态势优势值')
-%------------角度优势-----------
-clear all;
-k=1;
-for i = 0:0.1:pi
-    x(k) = i;
-    t=1;
-    for j=0:0.1:pi
-        x2(t) = j;
-        y(k,t) = getAAdvance(x(k), x2(t));
-        t = t+1;
-    end
-    k = k +1;
-end
-figure5 = figure('Color',[1 1 1]);
-[x, x2]=meshgrid(0:0.1:pi,0:0.1:pi);
-surf(x*180/pi,x2*180/pi,y);
-ylabel('进入角/°')
-xlabel('方位角/°')
-zlabel('角度优势值')
-print(figure5,'-dpng','-r300','./png/angAdvance.png')   % 保存到工作目录下
+% 一对一优势函数计算
 
-%----------速度函数--------
-clear all;
-k = 1;
-for i = 0:0.01:10
-    x(k) = i;
-    y(k) = getSpeedAdvance(x(k));
-    k = k+1;
+
+
+function f = getAdvance(M,T)
+% 距离优势
+dis = sqrt((M.p(1)-T.p(1)).^2 + (M.p(2)-T.p(2)).^2);
+disAdv = getDisAdvance(dis);
+% 方位角优势
+a = [cos(M.a), sin(M.a)]; % 载机方向向量
+b = [T.p(1)-M.p(1), T.p(2)-M.p(2) ];   % 载机目标视线角向量
+fai = acos(dot(a,b)/(norm(a)*norm(b)));  % 方位角[0,pi]
+angleAdvance = getAngleAdvance(fai);
+% 进入角优势
+a = [cos(T.a), sin(T.a)]; % 目标方向向量
+b = [T.p(1)-M.p(1), T.p(2)-M.p(2) ];   % 载机目标视线角向量
+q = acos(dot(a,b)/(norm(a)*norm(b)));  % 进入角[0,pi]
+inAngleAdvance = getInAngleAdvance(q);
+% 角度优势
+angAdv = angleAdvance*inAngleAdvance;
+% 速度优势
+speedAdv = getSpeedAdvance(M.v/T.v);
+
+f = 0.4*disAdv + 0.3*angAdv + 0.3 *speedAdv;
 end
-figure4 = figure('Color',[1 1 1]);
-plot(x,y,'r');
-axis([0 10 0 1.2]);
-xlabel('速度比');
-ylabel('速度优势');
-print(figure4,'-dpng','-r300','./png/speedAdvance.png')   % 保存到工作目录下
+
+
+
+
+
+
 
 
 %----------载机的距离优势----------
@@ -94,7 +42,7 @@ MinInescapableZone = 15*1000;  % 导弹的不可逃逸区最小值
 e = exp(1);
 
 if d > MaxDisOfRadar          % 大于雷达搜索距离
-     f = 0;
+    f = 0;
 end
 if d >= MaxDisOfMissile && d <= MaxDisOfRadar     % 在导弹最大攻击距离和雷达搜索距离之间
     f = 1.0/e*exp(-(d-MaxDisOfMissile)/(MaxDisOfRadar-MaxDisOfMissile));
@@ -108,7 +56,7 @@ end
 if d >= MinDisOfMissile && d < MinInescapableZone  % 小于最小不可逃逸区，大于导弹最小攻击范围
     f = e^(-(d- MinInescapableZone)/(MinDisOfMissile-MinInescapableZone));
 end
-if d < MinDisOfMissile 
+if d < MinDisOfMissile
     f = 0;
 end
 end
@@ -119,7 +67,7 @@ function f = getAngleAdvance(fai)
 MaxFaiOfRadar = 180/180*pi;  % 雷达搜索方位角
 MaxFaiOfMissile = 80/180*pi;  % 导弹最大离轴发射角，导弹导引系统最大偏角
 MaxFaiOfInescapable = 40/180*pi;  % 导弹不可逃逸区最大偏角
- 
+
 
 if fai > MaxFaiOfRadar
     f = 0;

@@ -35,9 +35,9 @@ classdef MissileAndTarget
         
         % 随机设置态势参I
         function obj = setRand(obj)
-            obj.Fighters.p =10000 * rand(obj.numOfFighters, 2);
+            obj.Fighters.p =100*1000 * rand(obj.numOfFighters, 2);
             obj.Fighters.v = 400* ones(obj.numOfFighters, 1);
-            obj.Fighters.angle = rand(obj.numOfFighters, 1);
+            obj.Fighters.angle = pi*rand(obj.numOfFighters, 1);
             
             obj.Targets.p = 10000+ 10000*rand(obj.numOfTargets, 2);
             obj.Targets.v = 300*ones(obj.numOfTargets, 1);
@@ -476,8 +476,8 @@ function f = getDisAdvance(d)
 MaxDisOfRadar = 100*1000; % 雷达最大搜索距离
 MaxDisOfMissile = 50*1000;  % 导弹最大攻击距离
 MinDisOfMissile = 10;       % 导弹最小攻击距离，小于此距离无法发射导弹
-MaxInescapableZone = 5*1000;  % 导弹的不可逃逸区外围
-MinInescapableZone = 2*1000;  % 导弹的不可逃逸区最小值
+MaxInescapableZone = 25*1000;  % 导弹的不可逃逸区外围
+MinInescapableZone = 15*1000;  % 导弹的不可逃逸区最小值
 MaxFai = 85.0/180*pi;         % 导弹最大离轴发射角
 if d > MaxDisOfRadar   % 大于雷达搜索距离
     f = 0;
