@@ -18,7 +18,7 @@ classdef MissileAndTarget
     properties
         dT = 0.02; % 采样时间0.02s
         maxVOfMissile  = 1500; % 导弹最大速度
-        maxVOfFighter = 300; % 载机最大速度 m/s
+        maxVOfFighter = 400; % 载机最大速度 m/s
         maxVOfTarget = 300;
         GOfFighter = 30.0 * 9.8; % 载机横向加速度最大值
         GOfMissile = 60.0 * 9.8; % 导弹的G值
@@ -35,13 +35,13 @@ classdef MissileAndTarget
         
         % 随机设置态势参I
         function obj = setRand(obj)
-            obj.Fighters.p =100*1000 * rand(obj.numOfFighters, 2);
-            obj.Fighters.v = 400* ones(obj.numOfFighters, 1);
+            obj.Fighters.p =1000 * rand(obj.numOfFighters, 2);
+            obj.Fighters.v = 500* ones(obj.numOfFighters, 1);
             obj.Fighters.angle = pi*rand(obj.numOfFighters, 1);
             
             obj.Targets.p = 10000+ 10000*rand(obj.numOfTargets, 2);
             obj.Targets.v = 300*ones(obj.numOfTargets, 1);
-            obj.Targets.angle = pi*ones(obj.numOfTargets, 1);
+            obj.Targets.angle = 10/180*pi*ones(obj.numOfTargets, 1);
             
             indexD = randperm(obj.numOfFighters, obj.numOfMissiles-obj.numOfFighters); % 对应位置的载机拥有2枚导弹
             obj.missileList = ones(1,obj.numOfFighters); 
@@ -270,7 +270,7 @@ classdef MissileAndTarget
         end
         
         %----模型1，第一阶段，载机与目标--------------
-        % output: m*n 的矩阵，m载机数，n目标数
+        % output: m*n 的矩阵，m载 机数，n目标数
         function f = getOptmizeMatrixOfFighterAndTarget(obj)
             % 距离优势
             disAdvance = zeros(obj.numOfFighters, obj.numOfTargets);
@@ -469,71 +469,81 @@ classdef MissileAndTarget
 end
 
 
-
+%%-----------态势函数定义--------
 %----------载机的距离优势----------
 function f = getDisAdvance(d)
 %常量
-MaxDisOfRadar = 100*1000; % 雷达最大搜索距离
-MaxDisOfMissile = 50*1000;  % 导弹最大攻击距离
-MinDisOfMissile = 10;       % 导弹最小攻击距离，小于此距离无法发射导弹
+MaxDisOfRadar = 100*1000;     % 雷达最大搜索距离
+MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
+MinDisOfMissile = 100;         % 导弹最小攻击距离，小于此距离无法发射导弹
 MaxInescapableZone = 25*1000;  % 导弹的不可逃逸区外围
 MinInescapableZone = 15*1000;  % 导弹的不可逃逸区最小值
-MaxFai = 85.0/180*pi;         % 导弹最大离轴发射角
-if d > MaxDisOfRadar   % 大于雷达搜索距离
-    f = 0;
+e = exp(1);
+
+if d > MaxDisOfRadar          % 大于雷达搜索距离
+     f = 0;
 end
-if d >= MaxDisOfMissile && d <= MaxDisOfRadar % 在导弹最大攻击距离和雷达搜索距离之间
-    f = 0.5*exp(-(d-MaxDisOfMissile)/(MaxDisOfRadar-MaxDisOfMissile));
+if d >= MaxDisOfMissile && d <= MaxDisOfRadar     % 在导弹最大攻击距离和雷达搜索距离之间
+    f = 1.0/e*exp(-(d-MaxDisOfMissile)/(MaxDisOfRadar-MaxDisOfMissile));
 end
 if d >= MaxInescapableZone && d < MaxDisOfMissile % 在不可逃逸区外，且在导弹攻击距离内
-    f = 2^(-(d-MaxInescapableZone)/(MaxDisOfMissile-MaxInescapableZone));
+    f = e^(-(d-MaxInescapableZone)/(MaxDisOfMissile-MaxInescapableZone));
 end
 if d >= MinInescapableZone && d < MaxInescapableZone % 不可逃逸区内，
     f = 1;
 end
 if d >= MinDisOfMissile && d < MinInescapableZone  % 小于最小不可逃逸区，大于导弹最小攻击范围
-    f = 2^(-(d- MinInescapableZone)/(MinDisOfMissile-MinInescapableZone));
+    f = e^(-(d- MinInescapableZone)/(MinDisOfMissile-MinInescapableZone));
 end
-if d < MinDisOfMissile
+if d < MinDisOfMissile 
     f = 0;
 end
 end
 
-%-----------载机or导弹的方位角优势，输入弧度，输出优势值0-1------------
+% 载机or导弹的方位角优势，输入弧度，输出优势值0-1
 function f = getAngleAdvance(fai)
 % 常量
-MaxFaiOfRadar = 90/180*pi;  % 雷达搜索方位角
+MaxFaiOfRadar = 180/180*pi;  % 雷达搜索方位角
 MaxFaiOfMissile = 80/180*pi;  % 导弹最大离轴发射角，导弹导引系统最大偏角
 MaxFaiOfInescapable = 40/180*pi;  % 导弹不可逃逸区最大偏角
+ 
 
 if fai > MaxFaiOfRadar
     f = 0;
 end
 if fai >= MaxFaiOfMissile && fai <= MaxFaiOfRadar
-    f = 0.3*(1-(fai-MaxFaiOfMissile)/(MaxFaiOfRadar-MaxFaiOfMissile));
+    f = 0.25*(1-(fai-MaxFaiOfMissile)/(MaxFaiOfRadar-MaxFaiOfMissile));
 end
 if fai >= MaxFaiOfInescapable && fai < MaxFaiOfMissile
-    f = 0.8-(fai-MaxFaiOfInescapable)/2/(MaxFaiOfMissile-MaxFaiOfInescapable);
+    f = 0.75-(fai-MaxFaiOfInescapable)/2/(MaxFaiOfMissile-MaxFaiOfInescapable);
 end
 if fai >=0 && fai < MaxFaiOfInescapable
-    f = 1-fai/5/MaxFaiOfInescapable;
+    f = 1-fai/4/MaxFaiOfInescapable;
 end
 end
 
-%---------载机or导弹的进入角优势，输入弧度---------------
+%---------载机or导弹的进入角优势---------------
 function f = getInAngleAdvance(q)
 qDeg = q/pi*180;  % 弧度转化为角度
-if qDeg < 50
-    f = qDeg/50;
+if qDeg < 45
+    f = qDeg/45;
 end
-if qDeg >=50 && qDeg <= 180
-    f = 1-(qDeg-50)/130;
+if qDeg >=45 && qDeg <= 180
+    f = 1-(qDeg-45)/(180-45);
 end
+end
+%-----------角度优势,上面两个合起来---------------
+function f = getAAdvance(q, fai)
+f = getInAngleAdvance(q)*getAngleAdvance(fai);
 end
 
 %---------载机or导弹的速度优势,输入载机速度or导弹速度和目标速度的比值----------------
 function f = getSpeedAdvance(pv)
-if pv > 1.5
+f = 0;
+if pv > 3
+    f = exp((1-pv/3.0)/10);
+end
+if pv > 1.5 && pv <= 3
     f = 1;
 end
 if pv >= 0.6 && pv <= 1.5

@@ -78,7 +78,7 @@ end
 figure4 = figure('Color',[1 1 1]);
 plot(x,y,'r');
 axis([0 10 0 1.2]);
-xlabel('速度比');
+xlabel('速度比'); 
 ylabel('速度优势');
 print(figure4,'-dpng','-r300','./png/speedAdvance.png')   % 保存到工作目录下
 
@@ -133,7 +133,7 @@ end
 if fai >=0 && fai < MaxFaiOfInescapable
     f = 1-fai/4/MaxFaiOfInescapable;
 end
-end
+end 
 
 %---------载机or导弹的进入角优势---------------
 function f = getInAngleAdvance(q)
