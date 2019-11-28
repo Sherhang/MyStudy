@@ -271,47 +271,23 @@ classdef MissileAndTarget
         
         %----模型1，第一阶段，载机与目标--------------
         % output: m*n 的矩阵，m载 机数，n目标数
+        
         function f = getOptmizeMatrixOfFighterAndTarget(obj)
-            % 距离优势
-            disAdvance = zeros(obj.numOfFighters, obj.numOfTargets);
             dMT = getDisMatrixOfFighterAndTarget(obj);
+            f0 = zeros(obj.numOfFighters, obj.numOfTargets);
             for i=1:obj.numOfFighters
-                for j=1:obj.numOfTargets
-                    d = dMT(i,j);
-                    disAdvance(i,j) = getDisAdvance(d);
-                end
-            end
-            % 方位角优势
-            angleAdvance = zeros(obj.numOfFighters, obj.numOfTargets);
-            for i=1:obj.numOfFighters
-                for j=1:obj.numOfTargets
+                for j=1:obj.numOfTargets  
+                    d = dMT(i,j); % 距离
                     a = [cos(obj.Fighters.angle(i)), sin(obj.Fighters.angle(i))]; % 载机方向向量
                     b = [obj.Targets.p(j,1)-obj.Fighters.p(i,1), obj.Targets.p(j,2)-obj.Fighters.p(i,2) ];   % 载机目标视线角向量
-                    fai = acos(dot(a,b)/(norm(a)*norm(b)));  % 方位角[0,pi]
-                    angleAdvance(i,j) = getAngleAdvance(fai);
-                end
-            end
-            % 进入角优势
-            inAngleAdvance = zeros(obj.numOfFighters, obj.numOfTargets);
-            for i=1:obj.numOfFighters
-                for j=1:obj.numOfTargets
+                    alpha = acos(dot(a,b)/(norm(a)*norm(b)));  % 方位角[0,pi]
                     a = [cos(obj.Targets.angle(j)), sin(obj.Targets.angle(j))]; % 目标方向向量
-                    b = [obj.Targets.p(j,1)-obj.Fighters.p(i,1), obj.Targets.p(j,2)-obj.Fighters.p(i,2) ];   % 载机目标视线角向量
-                    q = acos(dot(a,b)/(norm(a)*norm(b)));  % 进入角[0,pi]
-                    inAngleAdvance(i,j) = getInAngleAdvance(q);
+                    beta = acos(dot(a,b)/(norm(a)*norm(b)));  % 进入角[0,pi]
+                    pv = obj.Fighters.v(i)/obj.Targets.v(j);  % 速度比
+                    f0(i,j) =  getFighterAdvance(d,alpha,beta,pv);
                 end
             end
-            % 速度优势
-            speedAdvance = zeros(obj.numOfFighters, obj.numOfTargets);
-            for i=1:obj.numOfFighters
-                for j=1:obj.numOfTargets
-                    pv = obj.Fighters.v(i)/obj.Targets.v(j);
-                    speedAdvance(i,j) = getSpeedAdvance(pv);
-                end
-            end
-            %-----计算载机相对于目标的优势矩阵-----------
-            f0 = 0.4*disAdvance + 0.3*speedAdvance...
-                + 0.3*angleAdvance.*inAngleAdvance;
+
             %-----载机可以攻击多个目标，矩阵扩充---------
             % 导弹序列，标记索引处的导弹属于哪个载机，如[1 2 2 3 4]表示索引2,3的导弹属于2号载机
             k =1; orderMissile = ones(1,obj.numOfMissiles);
@@ -469,7 +445,7 @@ classdef MissileAndTarget
 end
 
 
-%%-----------态势函数定义--------
+%% 函数部分
 %----------载机的距离优势----------
 function f = getDisAdvance(d)
 %常量
@@ -507,7 +483,6 @@ MaxFaiOfRadar = 180/180*pi;  % 雷达搜索方位角
 MaxFaiOfMissile = 80/180*pi;  % 导弹最大离轴发射角，导弹导引系统最大偏角
 MaxFaiOfInescapable = 40/180*pi;  % 导弹不可逃逸区最大偏角
  
-
 if fai > MaxFaiOfRadar
     f = 0;
 end
@@ -520,7 +495,7 @@ end
 if fai >=0 && fai < MaxFaiOfInescapable
     f = 1-fai/4/MaxFaiOfInescapable;
 end
-end
+end 
 
 %---------载机or导弹的进入角优势---------------
 function f = getInAngleAdvance(q)
@@ -552,4 +527,11 @@ end
 if pv < 0.6
     f = 0.1;
 end
+end
+%----------载机总优势------
+% d 距离，a 方位角，b 进入角，pv, 速度比
+function f = getFighterAdvance(d,a,b,pv)  % 
+f = 0.4*getDisAdvance(d) + 0.3*getAAdvance(a,b) +  0.3*getSpeedAdvance(pv);
+% 另一种方案，权重和距离有关，TODO
+%f = 0.4*getDisAdvance(d) + 0.3*getAAdvance(a,b) +  0.3*getSpeedAdvance(pv);
 end
