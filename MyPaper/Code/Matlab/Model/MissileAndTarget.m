@@ -1,4 +1,4 @@
- 
+
 classdef MissileAndTarget
     % 模型
     % 位置角度等参数以及两个阶段的模型
@@ -24,7 +24,15 @@ classdef MissileAndTarget
         GOfMissile = 60.0 * 9.8; % 导弹的G值
         GOfTarget = 30.0*9.8;
     end
-    
+    % 计算得到的常量
+    properties
+        orderMissile = [];
+        orderTarget = [];
+        Tmax = 10000; % 参考最大攻击时间，这个时间由第一次攻击得到
+        FAdvance = []; % 载机优势，虚拟
+        MAdvance = []; % 导弹优势，虚拟
+        FTime =[]; % 载机估算时间，虚拟
+    end
     methods
         % 构造函数
         function obj = MissileAndTarget(numOfFighters, numOfTargets, numOfMissiles)
@@ -35,39 +43,59 @@ classdef MissileAndTarget
         
         % 随机设置态势参I
         function obj = setRand(obj)
-            obj.Fighters.p =1000 * rand(obj.numOfFighters, 2);
+            obj.Fighters.p =30*1000 * rand(obj.numOfFighters, 2);
             obj.Fighters.v = 500* ones(obj.numOfFighters, 1);
             obj.Fighters.angle = pi*rand(obj.numOfFighters, 1);
             
-            obj.Targets.p = 10000+ 10000*rand(obj.numOfTargets, 2);
+            obj.Targets.p = 35*1000+ 20*1000*rand(obj.numOfTargets, 2);
             obj.Targets.v = 300*ones(obj.numOfTargets, 1);
-            obj.Targets.angle = 10/180*pi*ones(obj.numOfTargets, 1);
+            obj.Targets.angle = 50/180*pi*rand(obj.numOfTargets, 1);
             
             indexD = randperm(obj.numOfFighters, obj.numOfMissiles-obj.numOfFighters); % 对应位置的载机拥有2枚导弹
-            obj.missileList = ones(1,obj.numOfFighters); 
+            obj.missileList = ones(1,obj.numOfFighters);
             obj.missileList(indexD) = obj.missileList(indexD)+1;
             
             indexE = randperm(obj.numOfTargets, ceil(obj.numOfTargets/4));   % 1/4 对应位置的目标需要2枚导弹
-            obj.targetList = ones(1,obj.numOfTargets); 
+            obj.targetList = ones(1,obj.numOfTargets);
             obj.targetList(indexE) = obj.targetList(indexE)+1;
             
             % 导弹序列，标记索引处的导弹属于哪个载机，如[1 2 2 3 4]表示索引2,3的导弹属于2号载机
-            k =1; orderMissile = ones(1,obj.numOfMissiles);
+            k =1; obj.orderMissile = ones(1, obj.numOfMissiles);
             for i = 1:length(obj.missileList)
                 for j = 1:obj.missileList(i)
-                    orderMissile(k) = i;
+                    obj.orderMissile(k) = i;
                     k = k+1;
                 end
             end
-            % orderMissile %DEBUG
+            % 目标序列，[1,2,2,3]表示2号目标需要两枚导弹攻击
+            k=1;obj.orderTarget = ones(1,obj.numOfTargets);
+            for i=1:length(obj.targetList)
+                for j=1:obj.targetList(i)
+                    obj.orderTarget(k) = i;
+                    k = k+1;
+                end
+            end
             % 得到导弹的态势参数
-            obj.Missiles.p = obj.Fighters.p(orderMissile,:) ;
-            obj.Missiles.v = obj.Fighters.v(orderMissile,:) ;
-            obj.Missiles.angle = obj.Fighters.angle(orderMissile,:) ;
-
+            obj.Missiles.p = obj.Fighters.p(obj.orderMissile,:) ;
+            obj.Missiles.v = obj.Fighters.v(obj.orderMissile,:) ;
+            obj.Missiles.angle = obj.Fighters.angle(obj.orderMissile,:) ;
+            % 计算载机和目标距离矩阵,初始化Tmax
+            disMatrixOfFighterAndTarget = zeros(obj.numOfFighters, obj.numOfTargets);
+            for i = 1:obj.numOfFighters
+                for j = 1:obj.numOfTargets
+                    disMatrixOfFighterAndTarget(i,j) = sqrt(...
+                        (obj.Fighters.p(i,1)-obj.Targets.p(j,1))^2 ...
+                        +(obj.Fighters.p(i,2)-obj.Targets.p(j,2))^2 ...
+                        );
+                end
+            end
+           obj.Tmax = max(max(disMatrixOfFighterAndTarget))/(max(obj.Fighters.v)-min(obj.Targets.v));
+           [obj.FAdvance, obj.FTime] = getOptmizeMatrixOfFighterAndTarget(obj);  % 初始化优势和时间矩阵
+           obj.MAdvance = getOptmizeMatrixOfMissileAndTarget(obj); % 初始化
+            
         end
         
-        % 自定义态势参数
+        % y用户自定义态势参数
         function obj = set(obj, Fighters, Targets, missileList, targeList)
             obj.Fighters = Fighters;
             obj.Targets = Targets;
@@ -75,21 +103,41 @@ classdef MissileAndTarget
             obj.targeList = targeList;
             
             % 导弹序列，标记索引处的导弹属于哪个载机，如[1 2 2 3 4]表示索引2,3的导弹属于2号载机
-            k =1; orderMissile = ones(1,obj.numOfMissiles);
+            k =1; obj.orderMissile = ones(1, obj.numOfMissiles);
             for i = 1:length(obj.missileList)
                 for j = 1:obj.missileList(i)
-                    orderMissile(k) = i;
+                    obj.orderMissile(k) = i;
                     k = k+1;
                 end
             end
-            % orderMissile %DEBUG
+            % 目标序列，[1,2,2,3]表示2号目标需要两枚导弹攻击
+            k=1;obj.orderTarget = ones(1,obj.numOfTargets);
+            for i=1:length(obj.targetList)
+                for j=1:obj.targetList(i)
+                    obj.orderTarget(k) = i;
+                    k = k+1;
+                end
+            end
             % 得到导弹的态势参数
-            obj.Missiles.p = obj.Fighters.p(orderMissile,:) ;
+            obj.Missiles.p = obj.Fighters.p(obj.orderMissile,:) ;
             obj.Missiles.v = obj.maxSpeedOfMissile * ones(obj.numOfMissiles,1);
-            obj.Missiles.angle = obj.Fighters.angle(orderMissile,:) ;
+            obj.Missiles.angle = obj.Fighters.angle(obj.orderMissile,:) ;
+            % 计算载机和目标距离矩阵,初始化Tmax
+            disMatrixOfFighterAndTarget = zeros(obj.numOfFighters, obj.numOfTargets);
+            for i = 1:obj.numOfFighters
+                for j = 1:obj.numOfTargets
+                    disMatrixOfFighterAndTarget(i,j) = sqrt(...
+                        (obj.Fighters.p(i,1)-obj.Targets.p(j,1))^2 ...
+                        +(obj.Fighters.p(i,2)-obj.Targets.p(j,2))^2 ...
+                        );
+                end
+            end
+           obj.Tmax = max(max(disMatrixOfFighterAndTarget))/(max(obj.Fighters.v)-min(obj.Targets.v));
+           [obj.FAdvance, obj.FTime] = getOptmizeMatrixOfFighterAndTarget(obj);  % 初始化优势和时间矩阵
+           obj.MAdvance = getOptmizeMatrixOfMissileAndTarget(obj); % 初始化
         end
         
-        % PNG 制导, 第一行目标序号，第二行导弹序号，2*n
+        % PNG 制导, plan第一行目标实际序号，第二行导弹序号，2*n
         function obj = missileMoveByPNG(obj, plan)
             obj.Missiles.v = obj.maxVOfMissile*ones(obj.numOfMissiles,1);
             missilePlan = zeros(obj.numOfMissiles, 1); % 一个导弹最多攻击1个目标
@@ -98,7 +146,7 @@ classdef MissileAndTarget
                     missilePlan(plan(2,i)) = plan(1,i);
                 end
             end
-            % missilePlan
+%             missilePlan
             % 求目标位置
             nextP = obj.Missiles.p;
             for i=1:obj.numOfMissiles
@@ -129,7 +177,7 @@ classdef MissileAndTarget
             for i = 1:obj.numOfMissiles
                 if(missilePlan(i)~= 0)
                     if((sqrt((obj.Targets.p(missilePlan(i),1)-obj.Missiles.p(i,1)).^2 +...
-                            (obj.Targets.p(missilePlan(i),2)-obj.Missiles.p(i,2)).^2) < 30))
+                            (obj.Targets.p(missilePlan(i),2)-obj.Missiles.p(i,2)).^2) < 30)) % 击落距离30m
                         % 目标被击中，停止移动
                         obj.Targets.v(missilePlan(i),:) = 0;
                     else
@@ -157,7 +205,7 @@ classdef MissileAndTarget
                 end
             end
             
-            %fighterPlan % DEBUG
+%             fighterPlan % DEBUG
             % 求载机的下一次移动位置,假设载机最多攻击2个目标
             nextP = obj.Fighters.p;
             for i=1:obj.numOfFighters
@@ -220,19 +268,10 @@ classdef MissileAndTarget
             obj.Fighters.angle = theta;
             
             % 载机对应的导弹移动
-            % 导弹序列，标记索引处的导弹属于哪个载机，如[1 2 2 3 4]表示索引2,3的导弹属于2号载机
-            k =1; orderMissile = ones(1,obj.numOfMissiles);
-            for i = 1:length(obj.missileList)
-                for j = 1:obj.missileList(i)
-                    orderMissile(k) = i;
-                    k = k+1;
-                end
-            end
-            % orderMissile %DEBUG
             % 得到导弹的态势参数
-            obj.Missiles.p = obj.Fighters.p(orderMissile,:) ;
-            obj.Missiles.v = obj.Fighters.v(orderMissile,:) ;
-            obj.Missiles.angle = obj.Fighters.angle(orderMissile,:) ;
+            obj.Missiles.p = obj.Fighters.p(obj.orderMissile,:) ;
+            obj.Missiles.v = obj.Fighters.v(obj.orderMissile,:) ;
+            obj.Missiles.angle = obj.Fighters.angle(obj.orderMissile,:) ;
         end
         
         % 目标移动
@@ -270,13 +309,15 @@ classdef MissileAndTarget
         end
         
         %----模型1，第一阶段，载机与目标--------------
-        % output: m*n 的矩阵，m载 机数，n目标数
+        % output: f m*n 的矩阵，m虚拟载机数，虚拟n目标数
+        %         T m*n 的矩阵，表示估算时间矩阵
         
-        function f = getOptmizeMatrixOfFighterAndTarget(obj)
+        function [f, T] = getOptmizeMatrixOfFighterAndTarget(obj)  
             dMT = getDisMatrixOfFighterAndTarget(obj);
             f0 = zeros(obj.numOfFighters, obj.numOfTargets);
+            obj.Tmax = max(max(dMT))/(max(obj.Fighters.v)-min(obj.Targets.v));% 更新最长参考时间 
             for i=1:obj.numOfFighters
-                for j=1:obj.numOfTargets  
+                for j=1:obj.numOfTargets
                     d = dMT(i,j); % 距离
                     a = [cos(obj.Fighters.angle(i)), sin(obj.Fighters.angle(i))]; % 载机方向向量
                     b = [obj.Targets.p(j,1)-obj.Fighters.p(i,1), obj.Targets.p(j,2)-obj.Fighters.p(i,2) ];   % 载机目标视线角向量
@@ -285,160 +326,76 @@ classdef MissileAndTarget
                     beta = acos(dot(a,b)/(norm(a)*norm(b)));  % 进入角[0,pi]
                     pv = obj.Fighters.v(i)/obj.Targets.v(j);  % 速度比
                     f0(i,j) =  getFighterAdvance(d,alpha,beta,pv);
+                    v = obj.Fighters.v(i) - obj.Targets.v(j)*cos(beta);  % 在方位角方向上的相对速度差，估计值
+                    T(i,j) =  d./v;
                 end
-            end
-
+            end        
             %-----载机可以攻击多个目标，矩阵扩充---------
-            % 导弹序列，标记索引处的导弹属于哪个载机，如[1 2 2 3 4]表示索引2,3的导弹属于2号载机
-            k =1; orderMissile = ones(1,obj.numOfMissiles);
-            for i = 1:length(obj.missileList)
-                for j = 1:obj.missileList(i)
-                    orderMissile(k) = i;
-                    k = k+1;
-                end
-            end
-            % 目标序列，[1,2,2,3]表示2号目标需要两枚导弹攻击
-            k=1;orderTarget = ones(1,obj.numOfTargets);
-            for i=1:length(obj.targetList)
-                for j=1:obj.targetList(i)
-                    orderTarget(k) = i;
-                    k = k+1;
-                end
-            end
             % 矩阵扩充、
-            f = f0(:,orderTarget);
-            f = f(orderMissile,:);
+            f = f0(:,obj.orderTarget);T = T(:,obj.orderTarget);
+            f = f(obj.orderMissile,:);T = T(obj.orderMissile,:);
         end
         
         %----模型2，第二阶段，导弹与目标---------------
         function f = getOptmizeMatrixOfMissileAndTarget(obj)
-            % 距离优势
-            disAdvance = zeros(obj.numOfMissiles, obj.numOfTargets);
             dMT = getDisMatrixOfMissileAndTarget(obj);
+            f0 = zeros(obj.numOfMissiles, obj.numOfTargets);
             for i=1:obj.numOfMissiles
                 for j=1:obj.numOfTargets
-                    d = dMT(i,j);
-                    disAdvance(i,j) = getDisAdvance(d);
-                end
-            end
-            % 方位角优势
-            angleAdvance = zeros(obj.numOfMissiles, obj.numOfTargets);
-            for i=1:obj.numOfMissiles
-                for j=1:obj.numOfTargets
-                    a = [cos(obj.Missiles.angle(i)), sin(obj.Missiles.angle(i))]; % 导弹方向向量
-                    b = [obj.Targets.p(j,1)-obj.Missiles.p(i,1), obj.Targets.p(j,2)-obj.Missiles.p(i,2) ];   % 导弹目标视线角向量
-                    fai = acos(dot(a,b)/(norm(a)*norm(b)));  % 方位角[0,pi]
-                    angleAdvance(i,j) = getAngleAdvance(fai);
-                end
-            end
-            % 进入角优势
-            inAngleAdvance = zeros(obj.numOfMissiles, obj.numOfTargets);
-            for i=1:obj.numOfMissiles
-                for j=1:obj.numOfTargets
+                    d = dMT(i,j); % 距离
+                    a = [cos(obj.Missiles.angle(i)), sin(obj.Missiles.angle(i))]; % 载机方向向量
+                    b = [obj.Targets.p(j,1)-obj.Missiles.p(i,1), obj.Targets.p(j,2)-obj.Missiles.p(i,2) ];   % 载机目标视线角向量
+                    alpha = acos(dot(a,b)/(norm(a)*norm(b)));  % 方位角[0,pi]
                     a = [cos(obj.Targets.angle(j)), sin(obj.Targets.angle(j))]; % 目标方向向量
-                    b = [obj.Targets.p(j,1)-obj.Missiles.p(i,1), obj.Targets.p(j,2)-obj.Missiles.p(i,2) ];   % 导弹目标视线角向量
-                    q = acos(dot(a,b)/(norm(a)*norm(b)));  % 进入角[0,pi]
-                    inAngleAdvance(i,j) = getInAngleAdvance(q);
+                    beta = acos(dot(a,b)/(norm(a)*norm(b)));  % 进入角[0,pi]
+                    pv = obj.Missiles.v(i)/obj.Targets.v(j);  % 速度比
+                    f0(i,j) =  getMissileAdvance(d,alpha,beta,pv);
                 end
             end
-            % 速度优势
-            speedAdvance = zeros(obj.numOfMissiles, obj.numOfTargets);
-            for i=1:obj.numOfMissiles
-                for j=1:obj.numOfTargets
-                    pv = obj.Missiles.v(i)/obj.Targets.v(j);
-                    speedAdvance(i,j) = getSpeedAdvance(pv);
-                end
-            end
-            %-----计算导弹相对于目标的优势矩阵-----------
-            f = 0.4*disAdvance + 0.3*speedAdvance...
-                + 0.3*angleAdvance.*inAngleAdvance;
-             % 目标序列，[1,2,2,3]表示2号目标需要两枚导弹攻击
-            k=1;orderTarget = ones(1,obj.numOfTargets);
-            for i=1:length(obj.targetList)
-                for j=1:obj.targetList(i)
-                    orderTarget(k) = i;
-                    k = k+1;
-                end
-            end
+ 
             % 矩阵扩充、
-            f = f(:,orderTarget);
+            f = f0(:,obj.orderTarget);
         end
         
         %---------------载机目标序列解码-----------
         % eg: 矩阵的分配为[1,2,3,4;2,3,1,4]
         %     targetList = [1 2 1];
         %     missileList = [2 2 2];
+        %   输出 [1 2 2 3;1 2 1 2]
         function FTPlan = decodePlanFightersToTargets(obj, plan)
-             % 导弹序列，标记索引处的导弹属于哪个载机，如[1 2 2 3 4]表示索引2,3的导弹属于2号载机
-            k =1; orderMissile = ones(1,obj.numOfMissiles);
-            for i = 1:length(obj.missileList)
-                for j = 1:obj.missileList(i)
-                    orderMissile(k) = i;
-                    k = k+1;
-                end
-            end
-            % 目标序列，[1,2,2,3]表示2号目标需要两枚导弹攻击
-            k=1;orderTarget = ones(1,obj.numOfTargets);
-            for i=1:length(obj.targetList)
-                for j=1:obj.targetList(i)
-                    orderTarget(k) = i;
-                    k = k+1;
-                end
-            end
-            
-%             orderTarget
-%             orderMissile
+           
             FTPlan = plan;
-            for i=1:length(orderTarget)
+            for i=1:length(obj.orderTarget)
                 if plan(1,i) ~= 0
-                    FTPlan(1,i) = orderTarget(plan(1,i));
+                    FTPlan(1,i) = obj.orderTarget(plan(1,i));
                 else
                     FTPlan(1,i) = 0;
                 end
             end
-            for i=1:length(orderTarget)
+            for i=1:length(obj.orderTarget)
                 if plan(2,i) ~= 0
-                    FTPlan(2,i) = orderMissile(plan(2,i));
-                else 
+                    FTPlan(2,i) = obj.orderMissile(plan(2,i));
+                else
                     FTPlan(2,i) = 0;
                 end
             end
         end
-        
         
         %---------------导弹目标序列解码-----------
         % eg: 矩阵的分配为[1,2,3,4;2,3,1,4]
         %     targetList = [1 2 1];
         %     missileList = [2 2 2];
         function MTPlan = decodePlanMissilesToTargets(obj, plan)
-             % 导弹序列，标记索引处的导弹属于哪个载机，如[1 2 2 3 4]表示索引2,3的导弹属于2号载机
-            k =1; orderMissile = ones(1,obj.numOfMissiles);
-            for i = 1:length(obj.missileList)
-                for j = 1:obj.missileList(i)
-                    orderMissile(k) = i;
-                    k = k+1;
-                end
-            end
-            % 目标序列，[1,2,2,3]表示2号目标需要两枚导弹攻击
-            k=1;orderTarget = ones(1,obj.numOfTargets);
-            for i=1:length(obj.targetList)
-                for j=1:obj.targetList(i)
-                    orderTarget(k) = i;
-                    k = k+1;
-                end
-            end
-            
-%             orderTarget
-%             orderMissile
+           
             MTPlan = plan;
-            for i=1:length(orderTarget)
+            for i=1:length(obj.orderTarget)
                 if plan(1,i) ~= 0
-                    MTPlan(1,i) = orderTarget(plan(1,i));
+                    MTPlan(1,i) = obj.orderTarget(plan(1,i));
                 else
                     MTPlan(1,i) = 0;
                 end
             end
-
+            
         end
     end
     
@@ -447,7 +404,7 @@ end
 
 %% 函数部分
 %----------载机的距离优势----------
-function f = getDisAdvance(d)
+function f = getFDisAdvance(d)
 %常量
 MaxDisOfRadar = 100*1000;     % 雷达最大搜索距离
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
@@ -457,7 +414,7 @@ MinInescapableZone = 15*1000;  % 导弹的不可逃逸区最小值
 e = exp(1);
 
 if d > MaxDisOfRadar          % 大于雷达搜索距离
-     f = 0;
+    f = 0;
 end
 if d >= MaxDisOfMissile && d <= MaxDisOfRadar     % 在导弹最大攻击距离和雷达搜索距离之间
     f = 1.0/e*exp(-(d-MaxDisOfMissile)/(MaxDisOfRadar-MaxDisOfMissile));
@@ -471,9 +428,20 @@ end
 if d >= MinDisOfMissile && d < MinInescapableZone  % 小于最小不可逃逸区，大于导弹最小攻击范围
     f = e^(-(d- MinInescapableZone)/(MinDisOfMissile-MinInescapableZone));
 end
-if d < MinDisOfMissile 
+if d < MinDisOfMissile
     f = 0;
 end
+end
+%----------导弹的距离优势----------
+function f = getMDisAdvance(d)
+%常量
+% MaxDisOfRadar = 100*1000;     % 雷达最大搜索距离
+% MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
+% MinDisOfMissile = 100;         % 导弹最小攻击距离，小于此距离无法发射导弹
+MaxInescapableZone = 25*1000;  % 导弹的不可逃逸区外围
+% MinInescapableZone = 15*1000;  % 导弹的不可逃逸区最小值
+e = exp(1);
+f = e^(-d*e/MaxInescapableZone);
 end
 
 % 载机or导弹的方位角优势，输入弧度，输出优势值0-1
@@ -482,7 +450,7 @@ function f = getAngleAdvance(fai)
 MaxFaiOfRadar = 180/180*pi;  % 雷达搜索方位角
 MaxFaiOfMissile = 80/180*pi;  % 导弹最大离轴发射角，导弹导引系统最大偏角
 MaxFaiOfInescapable = 40/180*pi;  % 导弹不可逃逸区最大偏角
- 
+
 if fai > MaxFaiOfRadar
     f = 0;
 end
@@ -495,16 +463,17 @@ end
 if fai >=0 && fai < MaxFaiOfInescapable
     f = 1-fai/4/MaxFaiOfInescapable;
 end
-end 
+end
 
 %---------载机or导弹的进入角优势---------------
 function f = getInAngleAdvance(q)
+gama = 10;% 最佳进入角
 qDeg = q/pi*180;  % 弧度转化为角度
-if qDeg < 45
-    f = qDeg/45;
+if qDeg < gama
+    f = qDeg/gama;
 end
-if qDeg >=45 && qDeg <= 180
-    f = 1-(qDeg-45)/(180-45);
+if qDeg >=gama && qDeg <= 180
+    f = 1-(qDeg-gama)/(180-gama);
 end
 end
 %-----------角度优势,上面两个合起来---------------
@@ -530,8 +499,17 @@ end
 end
 %----------载机总优势------
 % d 距离，a 方位角，b 进入角，pv, 速度比
-function f = getFighterAdvance(d,a,b,pv)  % 
-f = 0.4*getDisAdvance(d) + 0.3*getAAdvance(a,b) +  0.3*getSpeedAdvance(pv);
+function f = getFighterAdvance(d,a,b,pv)  %
+f = 0.4*getFDisAdvance(d) + 0.3*getAAdvance(a,b) +  0.3*getSpeedAdvance(pv);
 % 另一种方案，权重和距离有关，TODO
 %f = 0.4*getDisAdvance(d) + 0.3*getAAdvance(a,b) +  0.3*getSpeedAdvance(pv);
 end
+%----------导弹总优势------
+% d 距离，a 方位角，b 进入角，pv, 速度比
+function f = getMissileAdvance(d,a,b,pv)  %
+f = 0.4*getMDisAdvance(d) + 0.3*getAAdvance(a,b) +  0.3*getSpeedAdvance(pv);
+% 另一种方案，权重和距离有关，TODO
+%f = 0.4*getDisAdvance(d) + 0.3*getAAdvance(a,b) +  0.3*getSpeedAdvance(pv);
+end
+
+
