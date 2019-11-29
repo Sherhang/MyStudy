@@ -3,9 +3,9 @@
 %                       长度是max(导弹数量，虚拟目标数量）
 % 输出：一个总体优势值
 function f = ModelFighters(obj, plan)
-[M T] = getOptmizeMatrixOfFighterAndTarget(obj) ;% 加入虚拟载机的优势函数矩阵,T估算时间矩阵
+[M, T] = getOptmizeMatrixOfFighterAndTarget(obj) ;% 加入虚拟载机的优势函数矩阵,T估算时间矩阵
 %------计算函数值------
-% 统计实际任务，plan第二行非0个数 
+% 统计实际任务，plan第二行非0个数
 N = sum(plan(2,:)~=0);T = zeros(1,N);
 f1 = 0; k=1;
 for i=1:size(plan,2)
@@ -15,10 +15,10 @@ for i=1:size(plan,2)
         f1 = f1 + M(p,q);
         % 时间矩阵
         T(k) = obj.FTime(p,q); k = k+1;
-end
-f2 = std(T)% 时间的标准差，一般是实际数据范围的1/4
-f3 = max(T)% 时间的最大值
-f = 0.8*f1/N- f2/obj.Tmax - f3/obj.Tmax;% TODO 这里权重难以确定，如何把f2,f3变换到0-1？
+    end
+    f2 = std(T);% 时间的标准差，一般是实际数据范围的1/4
+    f3 = max(T);% 时间的最大值
+    f = 0.8*f1 + 2- f2/obj.Tmax - f3/obj.Tmax;% TODO 这里权重难以确定，如何把f2,f3变换到0-1？
 end
 
 

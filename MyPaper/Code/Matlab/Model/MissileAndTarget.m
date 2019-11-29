@@ -47,7 +47,7 @@ classdef MissileAndTarget
             obj.Fighters.v = 500* ones(obj.numOfFighters, 1);
             obj.Fighters.angle = pi*rand(obj.numOfFighters, 1);
             
-            obj.Targets.p = 35*1000+ 20*1000*rand(obj.numOfTargets, 2);
+            obj.Targets.p = 40*1000+ 20*1000*rand(obj.numOfTargets, 2);
             obj.Targets.v = 300*ones(obj.numOfTargets, 1);
             obj.Targets.angle = 50/180*pi*rand(obj.numOfTargets, 1);
             

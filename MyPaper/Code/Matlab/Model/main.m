@@ -5,7 +5,7 @@ clc;
 % 常量
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 % 初始化
-obj = MissileAndTarget(5,3,5);
+obj = MissileAndTarget(8,9,10);
 obj = setRand(obj);
 % x = get(obj, 'pTargets')
 f1 = getOptmizeMatrixOfFighterAndTarget(obj);
