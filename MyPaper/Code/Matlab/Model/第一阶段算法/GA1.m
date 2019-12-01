@@ -42,7 +42,7 @@ for step=1:steps
     fMeanSave(step) = mean(fitPop);
     sSelect =  selectByGamble(s, fitPop); % 选择
     sCross = cross(sSelect, s, Pcross,crossAlg); % 交叉
-    s = mutate(sCross, Pmutate); % 变异
+    s = mutate(sCross, Pmutate, mutateAlg); % 变异
     s(randperm(popsize,1),:) = bestPlan; % 最优解取回来
     % 更新适应度函数，
     for i=1:popsize
