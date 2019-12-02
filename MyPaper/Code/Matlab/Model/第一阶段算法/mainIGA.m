@@ -1,8 +1,8 @@
 % 各种算法的比较脚本
 % 在此之间请先运行模型一段时间，然后暂停
 % 常量
-Repetition = 10; % 每个算法的重复次数
-%% GA1算法部分
+Repetition = 2; % 每个算法的重复次数
+%% IGA算法部分
 popsize=20;steps=200;Pcross=0.4;Pmutate=0.4;
 %----------比较交叉算子------------
 % PMX-EM
@@ -10,7 +10,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_PMX_EM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "PMX", "EM");
+    [planGA_PMX_EM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "PMX", "EM");
 end
 fBestSave_PMX_EM = mean(fB);
 fMeanSave_PMX_EM = mean(fM);
@@ -20,7 +20,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_OX1_EM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "OX1", "EM");
+    [planGA_OX1_EM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "OX1", "EM");
 end
 fBestSave_OX1_EM = mean(fB);
 fMeanSave_OX1_EM = mean(fM);
@@ -38,7 +38,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_PMX_EM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "PMX", "EM");
+    [planGA_PMX_EM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "PMX", "EM");
 end
 fBestSave_PMX_EM = mean(fB);
 fMeanSave_PMX_EM = mean(fM);
@@ -48,7 +48,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_PMX_DM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "PMX", "DM");
+    [planGA_PMX_DM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "PMX", "DM");
 end
 fBestSave_PMX_DM = mean(fB);
 fMeanSave_PMX_DM = mean(fM);
@@ -58,7 +58,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_PMX_IM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "PMX", "IM");
+    [planGA_PMX_IM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "PMX", "IM");
 end
 fBestSave_PMX_IM = mean(fB);
 fMeanSave_PMX_IM = mean(fM);
@@ -68,7 +68,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_PMX_SIM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "PMX", "SIM");
+    [planGA_PMX_SIM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "PMX", "SIM");
 end
 fBestSave_PMX_SIM = mean(fB);
 fMeanSave_PMX_SIM = mean(fM);
@@ -78,7 +78,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_PMX_IVM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "PMX", "IVM");
+    [planGA_PMX_IVM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "PMX", "IVM");
 end
 fBestSave_PMX_IVM = mean(fB);
 fMeanSave_PMX_IVM = mean(fM);
@@ -88,7 +88,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_PMX_SM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "PMX", "SM");
+    [planGA_PMX_SM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "PMX", "SM");
 end
 fBestSave_PMX_SM = mean(fB);
 fMeanSave_PMX_SM = mean(fM);
@@ -98,7 +98,7 @@ fB = zeros(Repetition,steps+1);
 fM = zeros(Repetition,steps+1);
 t =  zeros(Repetition,1);
 for i =1:Repetition
-    [planGA_PMX_LM, fB(i,:),fM(i,:), t(i)] = GA1(obj,popsize,steps,Pcross,Pmutate, "PMX", "LM");
+    [planGA_PMX_LM, fB(i,:),fM(i,:), t(i)] = IGA(obj,popsize,steps,Pcross,Pmutate, "PMX", "LM");
 end
 fBestSave_PMX_LM = mean(fB);
 fMeanSave_PMX_LM = mean(fM);
