@@ -45,9 +45,9 @@ classdef MissileAndTarget
         function obj = setRand(obj)
             obj.Fighters.p =30*1000 * rand(obj.numOfFighters, 2);
             obj.Fighters.v = 500* ones(obj.numOfFighters, 1);
-            obj.Fighters.angle = pi*rand(obj.numOfFighters, 1);
+            obj.Fighters.angle = 0.5*pi*rand(obj.numOfFighters, 1);
             
-            obj.Targets.p = 40*1000+ 20*1000*rand(obj.numOfTargets, 2);
+            obj.Targets.p = 50*1000+ 20*1000*rand(obj.numOfTargets, 2);
             obj.Targets.v = 300*ones(obj.numOfTargets, 1);
             obj.Targets.angle = 50/180*pi*rand(obj.numOfTargets, 1);
             
@@ -195,6 +195,55 @@ classdef MissileAndTarget
             end
             
             obj.Missiles.angle = r;
+        end
+        %% 导弹飞行过程中是否可以改变目标
+        function flag = canChange(obj, plan)
+            r0 = obj.Missiles.angle;  % 导弹原始方向
+            obj.Missiles.v = obj.maxVOfMissile*ones(obj.numOfMissiles,1);
+            missilePlan = zeros(obj.numOfMissiles, 1); % 一个导弹最多攻击1个目标
+            for i=1:length(plan)
+                if plan(2,i) ~= 0
+                    missilePlan(plan(2,i)) = plan(1,i);
+                end
+            end
+%             missilePlan
+            % 求目标位置
+            nextP = obj.Missiles.p;
+            for i=1:obj.numOfMissiles
+                if(missilePlan(i)~= 0)
+                    nextP(i,:) = obj.Targets.p(missilePlan(i),:);
+                end
+            end
+            % 推算上一时刻导弹位置
+            missilePPer = obj.Missiles.p - ...
+                [obj.Missiles.v *obj.dT.*cos(obj.Missiles.angle), ...
+                obj.Missiles.v *obj.dT.*sin(obj.Missiles.angle)];
+            
+            % 推算上一时刻的目标位置
+            nextPPer = obj.Missiles.p;
+            for i=1:obj.numOfMissiles
+                if(missilePlan(i)~= 0)
+                    nextPPer(i,:) = obj.Targets.p(missilePlan(i),:)- ...
+                        [obj.Targets.v(missilePlan(i)) *obj.dT.*cos(obj.Targets.angle(missilePlan(i))), ...
+                        obj.Targets.v(missilePlan(i)) *obj.dT.*sin(obj.Targets.angle(missilePlan(i)))];
+                end
+            end
+            % 上一时刻的弹目视线角
+            qper = atan2(nextPPer(:,2)-missilePPer(:,2), nextPPer(:,1)-missilePPer(:,1)); % n*1的矩阵
+            qper(qper<0) = qper(qper<0) + 2*pi;
+            pPNG = 3;
+            q = atan2(nextP(:,2)-obj.Missiles.p(:,2), nextP(:,1)-obj.Missiles.p(:,1));
+            q(q<0) = q(q<0)+2*pi;  % 小于0的元素+2pi
+            dQ = q-qper;
+            dQ(dQ<-pi) = dQ(dQ<-pi)+2*pi;
+            dQ(dQ>pi) = dQ(dQ>pi)-2*pi;
+            r = pPNG * dQ + obj.Missiles.angle; % 导弹新的方向角
+            omiga = obj.GOfMissile./obj.Missiles.v;
+            maxTheta = omiga * obj.dT; % 最大转向, 每个导弹的不一样，n*1
+            flag=1;
+            if sum(abs(r-r0)>maxTheta)>0
+                flag=0;
+            end
         end
         
         %% 直接追踪法，载机接近目标,plan为固定目标顺序,2*n,第一行表示目标，第二行表示载机
@@ -456,9 +505,9 @@ classdef MissileAndTarget
                     d = dMT(i,j); % 距离
                     a = [cos(obj.Missiles.angle(i)), sin(obj.Missiles.angle(i))]; % 载机方向向量
                     b = [obj.Targets.p(j,1)-obj.Missiles.p(i,1), obj.Targets.p(j,2)-obj.Missiles.p(i,2) ];   % 载机目标视线角向量
-                    alpha = acos(dot(a,b)/(norm(a)*norm(b)));  % 方位角[0,pi]
+                    alpha = acos(max(-1,min(1,dot(a,b)/(norm(a)*norm(b)))));  % 方位角[0,pi],max min 防止计算出现复数
                     a = [cos(obj.Targets.angle(j)), sin(obj.Targets.angle(j))]; % 目标方向向量
-                    beta = acos(dot(a,b)/(norm(a)*norm(b)));  % 进入角[0,pi]
+                    beta = acos(max(-1,min(1,dot(a,b)/(norm(a)*norm(b)))));  % 进入角[0,pi]
                     pv = obj.Missiles.v(i)/obj.Targets.v(j);  % 速度比
                     f0(i,j) =  getMissileAdvance(d,alpha,beta,pv);
                 end
