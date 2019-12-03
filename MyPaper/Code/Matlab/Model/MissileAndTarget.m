@@ -34,14 +34,14 @@ classdef MissileAndTarget
         FTime =[]; % 载机估算时间，虚拟
     end
     methods
-        % 构造函数
+        %% 构造函数
         function obj = MissileAndTarget(numOfFighters, numOfTargets, numOfMissiles)
             obj.numOfFighters = numOfFighters;
             obj.numOfTargets = numOfTargets;
             obj.numOfMissiles = numOfMissiles;
         end
         
-        % 随机设置态势参I
+        %% 随机设置态势参I
         function obj = setRand(obj)
             obj.Fighters.p =30*1000 * rand(obj.numOfFighters, 2);
             obj.Fighters.v = 500* ones(obj.numOfFighters, 1);
@@ -55,7 +55,7 @@ classdef MissileAndTarget
             obj.missileList = ones(1,obj.numOfFighters);
             obj.missileList(indexD) = obj.missileList(indexD)+1;
             
-            indexE = randperm(obj.numOfTargets, ceil(obj.numOfTargets/4));   % 1/4 对应位置的目标需要2枚导弹
+            indexE = randperm(obj.numOfTargets,2);   % ceil(obj.numOfTargets/4), 1/4 对应位置的目标需要2枚导弹
             obj.targetList = ones(1,obj.numOfTargets);
             obj.targetList(indexE) = obj.targetList(indexE)+1;
             
@@ -95,7 +95,7 @@ classdef MissileAndTarget
             
         end
         
-        % y用户自定义态势参数
+        %% y用户自定义态势参数
         function obj = set(obj, Fighters, Targets, missileList, targeList)
             obj.Fighters = Fighters;
             obj.Targets = Targets;
@@ -137,7 +137,7 @@ classdef MissileAndTarget
            obj.MAdvance = getOptmizeMatrixOfMissileAndTarget(obj); % 初始化
         end
         
-        % PNG 制导, plan第一行目标实际序号，第二行导弹序号，2*n
+        %% PNG 制导, plan第一行目标实际序号，第二行导弹序号，2*n
         function obj = missileMoveByPNG(obj, plan)
             obj.Missiles.v = obj.maxVOfMissile*ones(obj.numOfMissiles,1);
             missilePlan = zeros(obj.numOfMissiles, 1); % 一个导弹最多攻击1个目标
@@ -169,10 +169,16 @@ classdef MissileAndTarget
                 end
             end
             % 上一时刻的弹目视线角
-            qper = atan2(nextPPer(:,2)-missilePPer(:,2), nextPPer(:,1)-missilePPer(:,1));
-            pPNG = 5;
+            qper = atan2(nextPPer(:,2)-missilePPer(:,2), nextPPer(:,1)-missilePPer(:,1)); % n*1的矩阵
+            qper(qper<0) = qper(qper<0) + 2*pi;
+            pPNG = 3;
             q = atan2(nextP(:,2)-obj.Missiles.p(:,2), nextP(:,1)-obj.Missiles.p(:,1));
-            r = pPNG * (q-qper) + obj.Missiles.angle;
+            q(q<0) = q(q<0)+2*pi;  % 小于0的元素+2pi
+            dQ = q-qper;
+            dQ(dQ<-pi) = dQ(dQ<-pi)+2*pi;
+            dQ(dQ>pi) = dQ(dQ>pi)-2*pi;
+
+            r = pPNG * dQ + obj.Missiles.angle;
             % 导弹移动
             for i = 1:obj.numOfMissiles
                 if(missilePlan(i)~= 0)
@@ -191,7 +197,7 @@ classdef MissileAndTarget
             obj.Missiles.angle = r;
         end
         
-        % 直接追踪法，载机接近目标,plan为固定目标顺序,2*n,第一行表示目标，第二行表示载机
+        %% 直接追踪法，载机接近目标,plan为固定目标顺序,2*n,第一行表示目标，第二行表示载机
         function obj = fighterMove(obj, plan)
             fighterPlan = zeros(obj.numOfFighters, 2); %最多攻击两个目标
             for i=1:length(plan)
@@ -274,7 +280,112 @@ classdef MissileAndTarget
             obj.Missiles.angle = obj.Fighters.angle(obj.orderMissile,:) ;
         end
         
-        % 目标移动
+        %% 载机以PNG移动.
+         function obj = fighterMoveByPNG(obj, plan)
+             % 由于一个载机可以攻击多个目标，那么需要重新定义多个目标的速度，这是和导弹不同的地方
+            fighterPlan = zeros(obj.numOfFighters, 2); %最多攻击两个目标
+            for i=1:length(plan)
+                if plan(2,i) == 0   % 该目标不攻击，则跳过
+                    continue;
+                end
+                if(fighterPlan(plan(2,i), 1) == 0)
+                    fighterPlan(plan(2,i), 1) = plan(1,i);
+                else
+                    fighterPlan(plan(2,i), 2) = plan(1,i);
+                end
+            end
+            
+%             fighterPlan % DEBUG
+            % 求载机的下一次移动位置,假设载机最多攻击2个目标
+            nextP = obj.Fighters.p;
+            nextVVector = zeros(obj.numOfFighters,2);  % 假设下一个位置点的速度是nextV矢量
+            for i=1:obj.numOfFighters
+                if(fighterPlan(i,1)~= 0)
+                    nextP(i,:) = obj.Targets.p(fighterPlan(i,1),:);
+                    nextVVector(i,:) = obj.Targets.v((fighterPlan(i,1)))*...
+                        [cos(obj.Targets.angle((fighterPlan(i,1)))),sin(obj.Targets.angle((fighterPlan(i,1))))];
+                        % 下一个位置点的速度矢量
+                end
+                if(fighterPlan(i,2)~= 0) % 需要攻击两个目标, 则移到目标为中间位置
+                    nextP(i,:) = (nextP(i,:)+obj.Targets.p(fighterPlan(i,2),:))./2;
+                    nextVVector(i,:) = nextVVector(i,:)./2 + obj.Targets.v((fighterPlan(i,1)))*...
+                        [cos(obj.Targets.angle((fighterPlan(i,1)))),sin(obj.Targets.angle((fighterPlan(i,1))))]./2;
+                end
+            end
+            %nextP %DEBUG
+            % 载机的理想方向
+            % 推算上一时刻的目标位置的前一个位置
+            nextPPer = nextP-nextVVector.*obj.dT;
+            % 推算载机的前一个位置
+            FightersPPer = obj.Fighters.p - obj.Fighters.v.*obj.dT.*[cos(obj.Fighters.angle),sin(obj.Fighters.angle)];
+            % 上一时刻的弹目视线角
+            qper = atan2(nextPPer(:,2)-FightersPPer(:,2), nextPPer(:,1)-FightersPPer(:,1)); % n*1的矩阵
+            qper(qper<0) = qper(qper<0) + 2*pi;
+            pPNG = 5;
+            % 当前视线角
+            q = atan2(nextP(:,2)-obj.Fighters.p(:,2), nextP(:,1)-obj.Fighters.p(:,1));
+            q(q<0) = q(q<0)+2*pi;  % 小于0的元素+2pi
+            dQ = q-qper;
+            dQ(dQ<-pi) = dQ(dQ<-pi)+2*pi;
+            dQ(dQ>pi) = dQ(dQ>pi)-2*pi;
+            theta = pPNG * dQ + obj.Fighters.angle;
+       
+            % 有目标的载机方向的均值
+            sumMeanTheta = 0; k = 0; meanTheta = 0;
+            for i=1:obj.numOfFighters
+                if ~(fighterPlan(i,1)==0 && fighterPlan(i,2)==0)
+                    sumMeanTheta = sumMeanTheta + theta(i);
+                    k = k+1;
+                end
+            end
+            if k~=0
+                meanTheta = sumMeanTheta./k;
+            end
+            % 如果载机没有攻击目标，为其它有目标方向的均值
+            for i=1:obj.numOfFighters
+                if(fighterPlan(i,1)==0 && fighterPlan(i,2)==0)
+                    theta(i) = meanTheta;
+                end
+            end
+            
+            % 航向修正，满足加速度限制
+            omiga = obj.GOfFighter./obj.Fighters.v;
+            maxTheta = omiga * obj.dT; % 最大转向, 每个载机的不一样，n*1
+            for i=1:obj.numOfFighters
+                angle0Vector = [cos(obj.Fighters.angle(i)), sin(obj.Fighters.angle(i))]; % 原始方向向量形式
+                angleDestVector = [cos(theta(i)), sin(theta(i))];
+                thetaAngle0WithAngleDest = acos(dot(angle0Vector, angleDestVector)/(norm(angle0Vector)*norm(angleDestVector)));
+                if(thetaAngle0WithAngleDest > maxTheta(i))
+                    d = obj.Fighters.angle(i) + maxTheta(i); % 调整的方向只有两个，只要比较一下即可
+                    e = obj.Fighters.angle(i) -maxTheta(i);
+                    dVector = [cos(d), sin(d)];
+                    eVector = [cos(e), sin(e)];
+                    % 新的夹角
+                    dNewTheta = acos(dot(dVector, angleDestVector)/(norm(dVector)*norm(angleDestVector)));
+                    eNewTheta = acos(dot(eVector, angleDestVector)/(norm(eVector)*norm(angleDestVector)));
+                    if(dNewTheta < thetaAngle0WithAngleDest)
+                        theta(i) = d;
+                    else
+                        if (eNewTheta < thetaAngle0WithAngleDest)
+                            theta(i) = e;
+                        end
+                    end
+                end
+            end
+            
+            % 载机移动
+            obj.Fighters.p = obj.Fighters.p+[obj.Fighters.v *obj.dT.*cos(theta), obj.Fighters.v *obj.dT.*sin(theta)];
+            obj.Fighters.angle = theta;
+            
+            % 载机对应的导弹移动
+            % 得到导弹的态势参数
+            obj.Missiles.p = obj.Fighters.p(obj.orderMissile,:) ;
+            obj.Missiles.v = obj.Fighters.v(obj.orderMissile,:) ;
+            obj.Missiles.angle = obj.Fighters.angle(obj.orderMissile,:) ;
+        end
+        
+        
+        %% 目标移动
         function obj = targetMove(obj)
             obj.Targets.p = obj.Targets.p + ...
                 [obj.Targets.v .*obj.dT.*cos(obj.Targets.angle), ...
@@ -282,7 +393,7 @@ classdef MissileAndTarget
         end
         
         %---------------优化建模---------------
-        % 计算载机和目标距离矩阵
+        %% 计算载机和目标距离矩阵
         function disMatrixOfFighterAndTarget = getDisMatrixOfFighterAndTarget(obj)
             disMatrixOfFighterAndTarget = zeros(obj.numOfFighters, obj.numOfTargets);
             for i = 1:obj.numOfFighters
@@ -295,7 +406,7 @@ classdef MissileAndTarget
             end
         end
         
-        % 计算导弹和目标距离矩阵
+        %% 计算导弹和目标距离矩阵
         function disMatrixOfMissileAndTarget = getDisMatrixOfMissileAndTarget(obj)
             disMatrixOfMissileAndTarget = zeros(obj.numOfMissiles, obj.numOfTargets);
             for i = 1:obj.numOfMissiles
@@ -308,7 +419,7 @@ classdef MissileAndTarget
             end
         end
         
-        %----模型1，第一阶段，载机与目标--------------
+        %% ----模型1，第一阶段，载机与目标--------------
         % output: f m*n 的矩阵，m虚拟载机数，虚拟n目标数
         %         T m*n 的矩阵，表示估算时间矩阵
         
@@ -336,7 +447,7 @@ classdef MissileAndTarget
             f = f(obj.orderMissile,:);T = T(obj.orderMissile,:);
         end
         
-        %----模型2，第二阶段，导弹与目标---------------
+        %% ----模型2，第二阶段，导弹与目标---------------
         function f = getOptmizeMatrixOfMissileAndTarget(obj)
             dMT = getDisMatrixOfMissileAndTarget(obj);
             f0 = zeros(obj.numOfMissiles, obj.numOfTargets);
@@ -357,7 +468,7 @@ classdef MissileAndTarget
             f = f0(:,obj.orderTarget);
         end
         
-        %---------------载机目标序列解码-----------
+        %% ---------------载机目标序列解码-----------
         % eg: 矩阵的分配为[1,2,3,4;2,3,1,4]
         %     targetList = [1 2 1];
         %     missileList = [2 2 2];
@@ -381,7 +492,7 @@ classdef MissileAndTarget
             end
         end
         
-        %---------------导弹目标序列解码-----------
+        %% ---------------导弹目标序列解码-----------
         % eg: 矩阵的分配为[1,2,3,4;2,3,1,4]
         %     targetList = [1 2 1];
         %     missileList = [2 2 2];

@@ -5,7 +5,7 @@ clc;
 % 常量
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 % 初始化
-obj = MissileAndTarget(8,9,10);
+obj = MissileAndTarget(5,6,8);
 obj = setRand(obj);
 % x = get(obj, 'pTargets')
 f1 = getOptmizeMatrixOfFighterAndTarget(obj);
@@ -31,7 +31,7 @@ for i=1:stepFighters
         obj.FAdvance = mat;% 更新虚拟优势矩阵
         obj.FTime = matT;
     end
-    obj = fighterMove(obj, planReal);
+    obj = fighterMoveByPNG(obj, planReal);
     obj = targetMove(obj);
     fightersSave.p(i,:,:) = obj.Fighters.p;
     targetsSave.p(i,:,:) = obj.Targets.p;
@@ -42,7 +42,7 @@ for i=1:stepFighters
         p=planReal(2,k);q=planReal(1,k);   % 虚拟编号
         if  p~=0  % 有一个为0表示不攻击
             if dMT(p,q) > MaxDisOfMissile
-                attackFlag = 0
+                attackFlag = 0;
                 break;
             end
         end

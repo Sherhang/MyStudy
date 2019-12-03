@@ -28,7 +28,7 @@ end
 % 一些初始变量
 fBestSave = zeros(1,steps); % 每一步最好的解记录
 fMeanSave = zeros(1,steps); % 每一步平均解记录
-fitPop = rand(popsize,1);    % 每个个体的函数值，即适应度，越大越好
+fitPop = zeros(popsize,1);    % 每个个体的函数值，即适应度，越大越好
 % 计算适应度函数
 for i=1:popsize
     plan = decodeFromHA(obj,s(i,:));
@@ -47,8 +47,8 @@ for step=1:steps
     % 更新适应度函数
     oldFit = fitPop;
     for i=1:popsize
-        plan = decodeFromHA(obj,sMutate(i,:));
-        fitPop(i) = ModelFighters(obj, plan);
+        plan = decodeFromHA(obj,sMutate(i,:));  % 这两步是具体问题的计算吗，其它形式问题修改这个部分即可
+        fitPop(i) = ModelFighters(obj, plan);   % ---------------------
         % 退火
         if fitPop(i)<oldFit(i)  % 产生了更差的解
             % 该解的接受概率 
