@@ -43,19 +43,20 @@ classdef MissileAndTarget
         
         %% 随机设置态势参I
         function obj = setRand(obj)
-            obj.Fighters.p =30*1000 * rand(obj.numOfFighters, 2);
+            obj.Fighters.p =10*1000 * rand(obj.numOfFighters, 2);
             obj.Fighters.v = 500* ones(obj.numOfFighters, 1);
-            obj.Fighters.angle = 0.5*pi*rand(obj.numOfFighters, 1);
+            obj.Fighters.angle = 0.1*pi*rand(obj.numOfFighters, 1);
             
-            obj.Targets.p = 50*1000+ 20*1000*rand(obj.numOfTargets, 2);
+            obj.Targets.p = 20*1000*rand(obj.numOfTargets, 2);
+            obj.Targets.p(:,1) = 60*1000 + 5*1000*rand(obj.numOfTargets, 1);
             obj.Targets.v = 300*ones(obj.numOfTargets, 1);
-            obj.Targets.angle = 50/180*pi*rand(obj.numOfTargets, 1);
+            obj.Targets.angle = 10/180*pi*rand(obj.numOfTargets, 1);
             
             indexD = randperm(obj.numOfFighters, obj.numOfMissiles-obj.numOfFighters); % 对应位置的载机拥有2枚导弹
             obj.missileList = ones(1,obj.numOfFighters);
             obj.missileList(indexD) = obj.missileList(indexD)+1;
             
-            indexE = randperm(obj.numOfTargets,2);   % ceil(obj.numOfTargets/4), 1/4 对应位置的目标需要2枚导弹
+            indexE = randperm(obj.numOfTargets,0);   % ceil(obj.numOfTargets/4), 1/4 对应位置的目标需要2枚导弹
             obj.targetList = ones(1,obj.numOfTargets);
             obj.targetList(indexE) = obj.targetList(indexE)+1;
             
@@ -481,9 +482,9 @@ classdef MissileAndTarget
                     d = dMT(i,j); % 距离
                     a = [cos(obj.Fighters.angle(i)), sin(obj.Fighters.angle(i))]; % 载机方向向量
                     b = [obj.Targets.p(j,1)-obj.Fighters.p(i,1), obj.Targets.p(j,2)-obj.Fighters.p(i,2) ];   % 载机目标视线角向量
-                    alpha = acos(dot(a,b)/(norm(a)*norm(b)));  % 方位角[0,pi]
+                    alpha = acos(max(-1,min(1,dot(a,b)/(norm(a)*norm(b)))));  % 方位角[0,pi]
                     a = [cos(obj.Targets.angle(j)), sin(obj.Targets.angle(j))]; % 目标方向向量
-                    beta = acos(dot(a,b)/(norm(a)*norm(b)));  % 进入角[0,pi]
+                    beta = acos(max(-1,min(1,dot(a,b)/(norm(a)*norm(b)))));  % 进入角[0,pi]
                     pv = obj.Fighters.v(i)/obj.Targets.v(j);  % 速度比
                     f0(i,j) =  getFighterAdvance(d,alpha,beta,pv);
                     v = obj.Fighters.v(i) - obj.Targets.v(j)*cos(beta);  % 在方位角方向上的相对速度差，估计值

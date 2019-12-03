@@ -1,3 +1,6 @@
+%% 说明
+% 当数目比较大时候，随着模型移动，方案不会变化，如果想看到移动过程中变化方案，将参数设置小一些obj = MissileAndTarget(2,3,4);
+% 还可以把总导弹数量设置的比需要攻击的数量少，仿真发现，当虚拟导弹数量大于等于虚拟目标数量，几乎不会发生方案变化的情况。
 
 %% -----第一阶段，载机飞向目标，当所有载机进入可攻击距离，发射导弹------
 clear;
@@ -6,8 +9,21 @@ file = fopen('log.txt','w');
 % 常量
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 % 初始化
-obj = MissileAndTarget(5,6,7);
+obj = MissileAndTarget(6,8,7);
 obj = setRand(obj);
+% 自定义态势参数
+% obj.Fighters.p =10*1000 * ones(obj.numOfFighters, 2);
+% obj.Fighters.p(:,2) = 5*1000*(1:obj.numOfFighters);
+% obj.Fighters.v = 400* ones(obj.numOfFighters, 1);
+% obj.Fighters.angle = 0.1*pi*ones(obj.numOfFighters, 1);
+% 
+% obj.Targets.p = 50*1000+ 10*1000*zeros(obj.numOfTargets, 2);
+% obj.Targets.p(:,1) = 50*1000*ones(obj.numOfTargets, 1);
+% obj.Targets.p(:,2) = 50*1000+10*1000*(1:obj.numOfTargets)';
+% obj.Targets.v = 300*ones(obj.numOfTargets, 1);
+% obj.Targets.angle = -20/180*pi*ones(obj.numOfTargets, 1);
+
+
 % x = get(obj, 'pTargets')
 f1 = getOptmizeMatrixOfFighterAndTarget(obj);
 f2 =  getOptmizeMatrixOfMissileAndTarget(obj);
@@ -34,10 +50,10 @@ for i=1:stepFighters
     targetsSave.angle(i,:,:) = obj.Targets.angle';
     
     f1 = getOptmizeMatrixOfFighterAndTarget(obj);
-    if  i==1   || rem(i,10)==0  % rem%10 == 0
+    if  i==1   || rem(i,10000)==0  % rem%10 == 0
         [mat, matT] =  getOptmizeMatrixOfFighterAndTarget(obj);
         planVir = quantumMinAssign(max(max(mat))-mat);
-        planReal = decodePlanFightersToTargets(obj, planVir); % 解码
+        planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
         obj.FAdvance = mat;% 更新虚拟优势矩阵
         obj.FTime = matT;
     end
@@ -63,7 +79,7 @@ for i=1:stepFighters
 end
 
 
-dAng =0.05*(rand(obj.numOfTargets,1)-0.5);  % 目标随机加速度
+dAng =0.01*(rand(obj.numOfTargets,1)-0.5);  % 目标随机加速度引起的角度变化
 for i=stepFighters+1:steps
     targetsSave.p(i,:,:) = obj.Targets.p;
     targetsSave.angle(i,:) = obj.Targets.angle';
@@ -80,13 +96,19 @@ for i=stepFighters+1:steps
     if rem(i,100)==0 
         mat =  getOptmizeMatrixOfMissileAndTarget(obj);
         missilePlan = quantumMinAssign(max(max(mat))-mat);
-        missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan); % 解码
-        if  canChange(obj, missilePlanReal) == 0  % 不能改目标，则取回原来的方案
-            missilePlanReal = missilePlanRealPer;
-        elseif sum(sum(missilePlanReal~=missilePlanRealPer)) ~= 0  % 且方案真的变了
-            fprintf(file,"Change");fprintf(file,"\n");
-            fprintf(file,num2str(missilePlanRealPer));fprintf(file,"\n");
-            fprintf(file,num2str(missilePlanReal));fprintf(file,"\n");
+        missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan)  % 解码
+        if  sum(sum(missilePlanReal~=missilePlanRealPer)) ~= 0  % 且方案真的变了
+            if canChange(obj, missilePlanReal) == 0  % 不能改目标，则取回原来的方案
+                missilePlanReal=missilePlanRealPer;
+            else
+                fprintf("Change");fprintf("\n");
+                fprintf(file,"Change");fprintf(file,"\n");
+                fprintf(file,"oldPlan=");
+                fprintf(file,num2str(missilePlanRealPer));fprintf(file,"\n");
+                fprintf(file,"currentPlan=");
+                fprintf(file,num2str(missilePlanReal));fprintf(file,"\n");
+                
+            end
         end
     end
     % 目标机动
