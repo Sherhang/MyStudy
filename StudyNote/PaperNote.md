@@ -1,3 +1,5 @@
+
+
 ### 1. Research on Task Assignment Optimization Algorithm Based on Multi-Agent
 
 Jie Zhang1,Gang Wang2,Xiaoqiang Yao2, Yafei Song1, Fangzheng Zhao1
@@ -45,6 +47,8 @@ q 剩余竞拍者队列，还没有得到物品的人。最好的实现方式是
 Zhao Junwei
 
 https://ieeexplore.ieee.org/document/6911527
+
+ 
 
  
 
@@ -123,4 +127,108 @@ http://www.wanfangdata.com.cn/details/detail.do?_type=perio&id=bjhkhtdxxb2014020
 [link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CMFD&dbname=CMFD201901&filename=1019800720.nh&uid=WEEvREcwSlJHSldRa1FhdkJkVG5heFhwejUyYmNkVDNmdW5YZzkxRzZnZz0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MDg1NzNDamtWTC9KVkYyNkY3dTRIdGJPcjVFYlBJUjhlWDFMdXhZUzdEaDFUM3FUcldNMUZyQ1VSTE9lWitSbkY= )
 
 硕士论文，可以参考载机规避导弹的机动形式 
+
+### 15.基于AHP和遗传算法的导弹作战任务分配问题研究
+
+[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFDLAST2018&filename=JSSG201803008&uid=WEEvREcwSlJHSldRa1Fhb09jT0lPdmtobTVXWEsvVkJYYkdNTDNpbkE3bz0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MDIyODBMejdZYWJHNEg5bk1ySTlGYklSOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVJMT2VadVpxRnkza1Vycko= )
+
+对于导弹任务分配的概念可以参考
+
+### 16. 空空导弹70年发展综述 
+
+[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFDLAST2016&filename=HKBQ201601001&uid=WEEvREdxOWJmbC9oM1NjYkZCbDdrNTBJK2c0WlZLVUljb2t5Y2Y4MVFJSjU=$R1yZ0H6jyaa0en3RxVUd8df-oHi7XMMDo7mtKT6mSmEvTuk11l2gFA!!&v=MTQwMTZyV00xRnJDVVJMT2VadVpwRkNubFY3L0FMU2JKZjdHNEg5Zk1ybzlGWllSOGVYMUx1eFlTN0RoMVQzcVQ= )
+
+### 17.基于攻击区的空战指挥引导态势评估_游航航 
+
+2019.03
+
+这篇的空战态势更合理，准备用这个
+
+### 18. 基于协同攻击区模型的多机最优攻击占位决策 
+
+2018
+
+对于多机协同的站位做了探讨，模型可以参考。
+
+### 19.Research on Genetic Algorithm Theory and ItsApplication on Missile Fire Allocation
+
+遗传算法理论研究及其在导弹火力分配中的应用
+
+ https://ieeexplore.ieee.org/document/4594006 
+
+GA 算法，导弹火力分配，模型是类似于指派，算法普通。
+
+### 20.Improved genetic algorithm for multichannel ship-to-air missile weapon system WTA problem
+
+多通道舰空导弹武器系统WTA问题的改进遗传算法
+
+和上述文献模型一样，算法一样。
+
+### 21.Research of cooperation guidance scheme based on multiple missiles engagement
+
+基于多枚导弹交战的合作制导方案研究
+
+### 22. Improved Particle Swarm Optimization Algorithm and its Application in Coordinated Air Combat Missile-Target Assignment 
+
+粒子群算法，导弹任务分配，模型同上
+
+### 23. 多导弹协同作战目标分配方法研究
+
+[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFDLAST2016&filename=FHDD201609019&uid=WEEvREcwSlJHSldRa1Fhb09jT0lPdmljaXBmRmFLSldReTgxU1Q1Slp4QT0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4ggI8Fm4gTkoUKaID8j8gFw!!&v=MDQ0OTJGeURsVWJyTUl5WFBhckc0SDlmTXBvOUViWVI4ZVgxTHV4WVM3RGgxVDNxVHJXTTFGckNVUkxPZVp1ZHI= )
+
+研究现状，概念可参考
+
+### 24. 改进合同网协议在防空武器目标分配中的应用 
+
+[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFDLAST2017&filename=XDFJ201704018&uid=WEEvREcwSlJHSldRa1Fhb09jT0lPdmljaXBmRVozTko0OWNhaFdPZE94MD0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MzA4ODhadWRyRnlEblc3ek9QU25OWkxHNEg5Yk1xNDlFYklSOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVJMT2U= )
+
+拍卖算法，wta问题
+
+
+
+### 25. The Weapon-Target Assignment Problem
+
+2018 这篇文章详细描述了各类WTA问题的数学形式和发展情况，具有较大的参考价值。
+
+[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=SJES&dbname=SJESTEMP_U&filename=SJES2367333BAC72722E7D485D4806FA50F1&v=MDA3NzZEOE9SUmN5ZUNKVWFGMXVRVXIvUEpsY1NibUtDR1lDR1FsZkNwYlEwNTkxaXhMcTZ3cWs9TmlmT2ZiRzdHTmJQckl3M0ZaZ0lEbnM3eldNVW5qdDFUUXZtcEJJeg== )
+
+### 26.Exact and heuristic methods for the vertex separator problem
+
+顶点分割问题。数学方向论文。可以看一下证明过程，尤其是分支定界法部分。
+
+### 27.Yukun Wang,Xuebo Chen. Hybrid quantum particle swarm optimization algorithm and its application[J]. ,2020,63(5).
+
+量子粒子群算法
+
+矩阵中0元素的定理:系数矩阵中独立0元素的最多个数等于能覆盖所有0元素的最少直线数。[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFD2002&filename=HLYZ200204009&uid=WEEvREcwSlJHSldRa1Fhb09jT0lPdmlRM3VKMzVZQm9FaXQxVHZVc1VjTT0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MDEzMDZPZVp1ZG5GeURuVzc3S0xTSFNkTEc0SHRQTXE0OUZiWVI4ZVgxTHV4WVM3RGgxVDNxVHJXTTFGckNVUkw= )
+
+### 28."匈牙利法"存在的问题及改进方法
+
+[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFD2003&filename=WJFZ200304026&uid=WEEvREcwSlJHSldRa1Fhb09jT0lPdmlRM3VKMzVZQm9FaXQxVHZVc1VjTT0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=Mjk4NzdiL0FNaWZOZExHNEh0TE1xNDlIWW9SOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVJMT2VadWRuRnlEZ1U= )   
+
+提到了匈牙利算法的问题
+
+### 29. The Hungarian Method for the Assignment Problem
+
+[link]( https://link.springer.com/chapter/10.1007/978-3-540-68279-0_2#citeas )
+
+匈牙利算法原始版
+
+### 30. A genetic programming hyper-heuristicapproach for the multi-skill resource constrained project scheduling problem
+
+参考文献
+
+### 32. Multi-target threat assessment in air combat based on AHP and FVIKOR
+
+### 33. AIM-120空空导弹发展综述 
+
+[link](  https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFDLAST2015&filename=FHDD201503007&uid=WEEvREdxOWJmbC9oM1NjYkcyQzZ4Q1pIZGQyQkdldkVYN0dPSGIvcGN2Y2M=$R1yZ0H6jyaa0en3RxVUd8df-oHi7XMMDo7mtKT6mSmEvTuk11l2gFA!!&v=MDc5MDBGckNVUkxPZVp1UnVGeTdrVkw3UEl5WFBhckc0SDlUTXJJOUZZNFI4ZVgxTHV4WVM3RGgxVDNxVHJXTTE=  )
+
+aim-120 参数来源
+
+### 34 Larrañaga1999_Article_GeneticAlgorithmsForTheTravell.
+
+路径编码TSP问题基本算子评价
+
+[link]( https://link.springer.com/content/pdf/10.1023%2FA%3A1006529012972.pdf )
 
