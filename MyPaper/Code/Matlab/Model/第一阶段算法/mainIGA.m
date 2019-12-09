@@ -1,9 +1,9 @@
 % 各种算法的比较脚本
 % 在此之间请先运行模型一段时间，然后暂停
 % 常量
-Repetition = 10; % 每个算法的重复次数
+Repetition = 2; % 每个算法的重复次数
 %% IGA算法部分
-popsize=20;steps=200;Pcross=0.4;Pmutate=0.4;
+popsize=5;steps=100;Pcross=0.4;Pmutate=0.4;
 %----------比较交叉算子------------
 % PMX-EM
 fB = zeros(Repetition,steps+1);

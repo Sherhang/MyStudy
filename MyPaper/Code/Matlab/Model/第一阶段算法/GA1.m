@@ -57,7 +57,7 @@ time = toc; % 足够精确
 fMeanSave(step+1) = mean(fitPop);
 planGA = s(maxIndex,:); % 最优解保护
 end
-% 基本算子部分
+
 %% 轮盘赌选择算子,适应值越大，越容易被选到，最后适应值大的个数多
 function sSelect =  selectByGamble(s, fitPop)
 % 输入：种群s(popsize,numLimit),种群个体的适应值fitPop(popsize,1);
@@ -96,8 +96,12 @@ switch crossAlg
         crossHandle = @crossPMX;% 函数句柄
     case "OX1"
         crossHandle = @crossOX1;
-    otherwise
-        crossHandle = @crossPMX;
+    case "OX2"
+        crossHandle = @crossOX2;
+    case "CX"
+        crossHandle = @crossCX;
+    case "PBX"
+        crossHandle = @crossPBX;
 end
     
 [popsize, numLimit] = size(s1);
@@ -112,6 +116,40 @@ for i=1:popsize
     end
 end
 end
+%% 群体变异
+function sMutate = mutate(s, Pmutate,mutateAlg)
+if nargin<3
+    mutateAlg="EM";
+end
+switch mutateAlg
+    case "EM"
+        mutateHandle = @mutateEM;% 函数句柄
+    case "DM"
+        mutateHandle = @mutateDM;% 函数句柄
+    case "IM"
+        mutateHandle = @mutateIM;% 函数句柄
+    case "SIM"
+        mutateHandle = @mutateSIM;% 函数句柄
+    case "IVM"
+        mutateHandle = @mutateIVM;% 函数句柄
+    case "SM"
+        mutateHandle = @mutateSM;% 函数句柄
+    case "LM"
+        mutateHandle = @mutateLM;% 函数句柄
+    otherwise
+        mutateHandle = @mutateEM;
+end
+[popsize, ~] = size(s);
+sMutate = s;
+pRand = rand(popsize,1);
+for i=1:popsize
+    if pRand(i) < Pmutate
+        sMutate(i,:) = mutateHandle(s(i,:)); % 算子选择
+    end
+end
+end
+
+% 基本算子部分
 %% PMX交叉法，输入两个解，产生两个新解
 function [child1,child2]=crossPMX(s1,s2)
 % 输入两个解s1,s2,输出交叉后的解
@@ -122,11 +160,9 @@ function [child1,child2]=crossPMX(s1,s2)
 bn=size(s1,2);
 scro(1,:)=s1;
 scro(2,:)=s2;
-
 r = randperm(bn,2); %在[1,bn]范围内随机产生2个交叉位
-chb1=min(r)-1; % 这里-1是为了和定义一样，包括这个也转换
+chb1=min(r); % 这里选择的位置是[chb1+1 : chb2]
 chb2=max(r);
-chb1=4-1;chb2=6;
 middle=scro(1,chb1+1:chb2);
 scro(1,chb1+1:chb2)=scro(2,chb1+1:chb2);
 scro(2,chb1+1:chb2)=middle;
@@ -242,80 +278,89 @@ end
 %% crossOX1 次序交叉法
 function [child1,child2]=crossOX1(s1,s2)
 % 交叉操作OX1
-% 输入，两个解，如s1=[1 2 3 4], s2=[2 4 3 1],随机产生交叉位，如2 4
+% 输入，两个解，如s1=[1 2 3 4], s2=[2 4 3 1],随机产生交叉位，如2 4,则交换的是2+1=3:4
 % 输出，两个新的解，child1=[ 4 2 3 1],child2 =  [2 1 3 4]
-numLimit=size(s1,2);
-scro = [s1;s2];
+numLimit=length(s1);
 r = randperm(numLimit,2); %在[1,numLimit]范围内随机产生2个交叉位
 chb1=min(r);
 chb2=max(r);
-middle=scro(1,chb1+1:chb2);
-scro(1,chb1+1:chb2)=scro(2,chb1+1:chb2);
-scro(2,chb1+1:chb2)=middle;
-for i=1:chb1 %似乎有问题
-    while find(scro(1,chb1+1:chb2)==scro(1,i))
-        zhi=find(scro(1,chb1+1:chb2)==scro(1,i));
-        y=scro(2,chb1+zhi);
-        scro(1,i)=y;
-    end
-    while find(scro(2,chb1+1:chb2)==scro(2,i))
-        zhi=find(scro(2,chb1+1:chb2)==scro(2,i));
-        y=scro(1,chb1+zhi);
-        scro(2,i)=y;
-    end
+% chb1=2;  % DEBUG
+% chb2=5;
+% 交换选中的片段,由于剩下的可以不考虑，直接全换
+child1 = s2;
+child2 = s1;
+% 求剩余的部分
+c1Left = setdiff(s1, s2(chb1+1:chb2),'stable'); % stable按照s1的顺序返回，否则会排序
+c2Left = setdiff(s2, s1(chb1+1:chb2),'stable'); % 
+% 填充剩余部分,从后面开始填充，这是和OX1不同的地方
+child1(chb2+1:numLimit) = c1Left(1:numLimit-chb2);
+child1(1:chb1) = c1Left(length(c1Left)-chb1+1  :length(c1Left));
+child2(chb2+1:numLimit) = c2Left(1:numLimit-chb2);
+child2(1:chb1) = c2Left(length(c1Left)-chb1+1  :length(c1Left));
 end
-for i=chb2+1:numLimit
-    while find(scro(1,1:chb2)==scro(1,i))
-        zhi=logical(scro(1,1:chb2)==scro(1,i));
-        y=scro(2,zhi);
-        scro(1,i)=y;
-    end
-    while find(scro(2,1:chb2)==scro(2,i))
-        zhi=logical(scro(2,1:chb2)==scro(2,i));
-        y=scro(1,zhi);
-        scro(2,i)=y;
-    end
-end
-child1 = scro(1,:);
-child2 = scro(2,:);
-
+%% crossOX2 次序交叉法
+function [child1,child2]=crossOX2(s1,s2)
+% 交叉操作OX2
+% 输入，两个解，如s1=[1 2 3 4], s2=[2 4 3 1],随机产生交叉位，如2 4,则交换的是2+1=3:4
+% 输出，两个新的解，child1=[ 4 2 3 1],child2 =  [2 1 3 4]
+numLimit=length(s1);
+r = randperm(numLimit,2); %在[1,numLimit]范围内随机产生2个交叉位
+chb1=min(r);
+chb2=max(r);
+% chb1=2;  % DEBUG
+% chb2=5;
+% 交换选中的片段,由于剩下的可以不考虑，直接全换
+child1 = s2;
+child2 = s1;
+% 求剩余的部分
+c1Left = setdiff(s1, s2(chb1+1:chb2),'stable'); % stable按照s1的顺序返回，否则会排序
+c2Left = setdiff(s2, s1(chb1+1:chb2),'stable'); % 
+% 填充剩余部分
+child1(1:chb1) = c1Left(1:chb1);
+child1(chb2+1:numLimit) = c1Left(chb1+1:length(c1Left));
+child2(1:chb1) = c2Left(1:chb1);
+child2(chb2+1:numLimit) = c2Left(chb1+1:length(c1Left));
 end
 %% 循环交叉法
-function [child1, child2] = crossCX()
+function [child1, child2] = crossCX(s1,s2)
+numLimit = length(s1);
+% 第一步，找一个环，为下标的序号
+p = randperm(numLimit,1); % 随机选一个位置
+% p = 1; % DEBUG
+start = s1(p); % 开始的点
+loop = []; % 环的序号
+k = 1;
+loop(k) = p; % 初始化
+while s2(p)~=start && k<numLimit
+    k = k+1;
+    p = find(s1==s2(p)); % 下一个位置
+    loop(k) = p;
+end
+leftP = setdiff([1:numLimit],loop,'stable'); % 非环的位置
+child1 = s1;
+child1(leftP) = s2(leftP);
+child2 = s2;
+child2(leftP) = s1(leftP);
+end
+%% 基于位置的交叉法
+function [child1, child2] = crossPBX(s1,s2)
+numLimit = length(s1);
+% 第一步，随机选取随机个位置
+num = randperm(numLimit,1);
+pChoose = sort(randperm(numLimit, num)); % 随机选随机个位置
+% pChoose = [2 5 6 9]; %DEBUG
+pNChoose = setdiff(1:numLimit, pChoose, 'stable'); % 没有被选中的位置
+
+sPut1 = setdiff(s2,s1(pChoose),'stable'); % 找到s2中元素-s1中被选中的元素
+child1 = s1;
+child1(pNChoose) = sPut1;
+
+sPut2 = setdiff(s1,s2(pChoose),'stable'); % 找到s2中元素-s1中被选中的元素
+child2 = s2;
+child2(pNChoose) = sPut2;
+
 end
 % 变异算子
-%% 群体变异
-function sMutate = mutate(s, Pmutate,mutateAlg)
-if nargin<3
-    mutateAlg="EM";
-end
-switch mutateAlg
-    case "EM"
-        mutateHandle = @mutateEM;% 函数句柄
-    case "DM"
-        mutateHandle = @mutateDM;% 函数句柄
-    case "IM"
-        mutateHandle = @mutateIM;% 函数句柄
-    case "SIM"
-        mutateHandle = @mutateSIM;% 函数句柄
-    case "IVM"
-        mutateHandle = @mutateIVM;% 函数句柄
-    case "SM"
-        mutateHandle = @mutateSM;% 函数句柄
-    case "LM"
-        mutateHandle = @mutateLM;% 函数句柄
-    otherwise
-        mutateHandle = @mutateEM;
-end
-[popsize, ~] = size(s);
-sMutate = s;
-pRand = rand(popsize,1);
-for i=1:popsize
-    if pRand(i) < Pmutate
-        sMutate(i,:) = mutateHandle(s(i,:)); % 算子选择
-    end
-end
-end
 %% 交换变异 EM, 
 function s2 = mutateEM(s1)
 numLimit = size(s1,2);

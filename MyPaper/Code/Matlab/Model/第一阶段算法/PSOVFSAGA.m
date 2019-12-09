@@ -1,26 +1,31 @@
-% 免疫遗传算法求解第一阶段模型，需要关注的点包括，算法的运行时间，算法的迭代
-% 参考MATLAB智能优化算法, 除了加入免疫算子，其它和GA1一样，比GA1算法效果更好
-function [planGA, fBestSave,fMeanSave, time] = IGA(obj,popsize,steps,Pcross,Pmutate, crossAlg, mutateAlg)
+% 基于粒子退火遗传的目标分配算法（PSOVFSAGA） TODO
+% 暂时先用竞争奖励机制看看效果
+
+% 模拟退火遗传算法，退火对象为变异算子和交叉算子
+function [planSAGA, fBestSave,fMeanSave,XcrossSave,XmutateSave, time] = PSOVFSAGA(obj,popsize,steps,Pcross,Pmutate,Top,Dop)
 % 输入obj，模型
-%         遗传算法的参数，种群数量popsize，迭代次数steps，交叉概率Pcross，变异概率Pmutate，交叉操作选择crossAlg，变异操作选择mutateAlg
-%                                                          通常取交叉概率（0.4-0.99，变异概率（0.001-0.2）
+%         遗传算法的参数，种群数量popsize，迭代次数steps，交叉概率Pcross，变异概率Pmutate，交叉操作选择crossAlg，变异操作选择mutateAlg,
+%         Top, 退火初始温度， Dop, 退火衰减系数
+%         通常取交叉概率（0.4-0.99，变异概率（0.001-0.2）
 %                                                             
-% 输出: 十进制编码的解planGA，如[2 3 1 4]
+% 输出: 十进制编码的解planSAGA，如[2 3 1 4]
 %       fBestSave ，每一步最好的解记录
 %       fMeanSave , 每一步平均解记录
-% test: [planGA, fBestSave,fMeanSave, time] = GA1(obj,100,100,1,0.5,"PMX","EM")
-PIM = 0.3; % 免疫概率
-if nargin < 7
-     mutateAlg="EM"; % ""表示字符串，当成一个整体
-end
-if nargin<6
-    crossAlg = "PMX";
-    mutateAlg="EM";
-end
+% test: [planSAGA, fBestSave,fMeanSave, time] = GA1(obj,100,100,1,0.5,"PMX","EM")
+
 tic; % 记录程序开始时间
 %-----种群表示方式--------
 % s(popsize,numLimit),numLimit表示解的范围，如10*8的矩阵对应1-10的一种排列
 % 产生初始种群
+
+
+Xcross = [1 1 1 1 1]*0.2; % 交叉算子最优解
+Xmutate = ones(1,7)*1/7;  % 变异算子最优解
+    
+algoCross=["PMX","OX1","OX2","CX","PBX"];
+algoMutate=["EM","DM","IM","SIM","IVM","SM","LM"];
+mutateAlg = algoMutate(1);
+
 numLimit = max(obj.numOfMissiles, sum(obj.targetList));
 s = zeros(popsize,numLimit); % 预分配内存
 for i=1:popsize
@@ -29,7 +34,9 @@ end
 % 一些初始变量
 fBestSave = zeros(1,steps); % 每一步最好的解记录
 fMeanSave = zeros(1,steps); % 每一步平均解记录
-fitPop = rand(popsize,1);    % 每个个体的函数值，即适应度，越大越好
+fitPop = zeros(popsize,1);    % 每个个体的函数值，即适应度，越大越好
+XcrossSave = zeros(steps, 5); % Xcorss 保存
+XmutateSave = zeros(steps,7);
 % 计算适应度函数
 for i=1:popsize
     plan = decodeFromHA(obj,s(i,:));
@@ -37,36 +44,46 @@ for i=1:popsize
 end
 %% 主循环开始
 for step=1:steps
-    % 先保存一些重要的变量
+   % 先保存一些重要的变量
     [fBestSave(step), maxIndex] =  max(fitPop);
     bestPlan = s(maxIndex,:); % 最优解保护
     fMeanSave(step) = mean(fitPop);
-    sSelect =  selectByGamble(s, fitPop); % 选择
-    sCross = cross(sSelect, s, Pcross,crossAlg); % 交叉
-    sMutate = mutate(sCross, Pmutate, mutateAlg); % 变异
-    sMutate(randperm(popsize,1),:) = bestPlan; % 最优解取回来
-    % 更新适应度函数
+    
     oldFit = fitPop;
-    for i=1:popsize
-        plan = decodeFromHA(obj,sMutate(i,:));
-        fitPop(i) = ModelFighters(obj, plan);
-        % 免疫
-        if rand()<PIM && fitPop(i)<oldFit(i)  % 产生了更差的解
-            sMutate(i,:) = s(i,:); % 取回原来的解
-            fitPop(i) = oldFit(i);
+    
+    [sSelect,fitPop] =  selectByGamble(s, fitPop); % 选择
+    [sCross,fitPop,Xcross] = cross(obj,sSelect, s, fitPop, Pcross,Xcross); % 交叉,同时更新适应度等
+    XcrossSave(step,:) = Xcross;
+    [sMutate,fitPop] = mutate(obj,sCross, fitPop,Pmutate, mutateAlg); % 变异
+    sMutate(randperm(popsize,1),:) = bestPlan; % 最优解取回来
+    fitPop(maxIndex) = oldFit(maxIndex);
+    
+    
+    for i=1:popsize   
+        % 退火
+        if fitPop(i)<oldFit(i)  % 产生了更差的解
+            % 该解的接受概率 
+            if rand() < exp(-(oldFit(i)-fitPop(i))/Top)
+            else  % 不接受，取回原来的
+                sMutate(i,:) = s(i,:);
+                fitPop(i) = oldFit(i);
+            end
         end     
     end
     s = sMutate; % 更新种群
+    
+    Top = Top*Dop; % 更新温度
 end
 %%
 toc;  % 计时结束
 time = toc; % 足够精确
 [fBestSave(step+1), maxIndex] =  max(fitPop);
 fMeanSave(step+1) = mean(fitPop);
-planGA = s(maxIndex,:); % 最优解保护
+planSAGA = s(maxIndex,:); % 最优解保护
 end
+
 %% 轮盘赌选择算子,适应值越大，越容易被选到，最后适应值大的个数多
-function sSelect =  selectByGamble(s, fitPop)
+function [sSelect,newFitPop] =  selectByGamble(s, fitPop)
 % 输入：种群s(popsize,numLimit),种群个体的适应值fitPop(popsize,1);
 % 输出：选择的种群sSelect(popsize,n)
 % test: s=[1 2 3;2 3 1;3 1 2;4 1 3];fitPop = [1 1 4 2];
@@ -76,10 +93,12 @@ chooseP = fitPop/sum(fitPop); % 各自被选到的概率
 chooseP = cumsum(chooseP);  % 每一项为之前所有项之和，如[1 2 3]--> [1 1+2 1+2+3]
 randP = rand(5*popsize,1); % 产生足够多的随机数列
 k=1;t=1;% k用于选出popsize个个体
+newFitPop = fitPop;
 while k<=popsize
     for i=1:popsize
         if (randP(t) < chooseP(i))  % 选中第i个
             sSelect(k,:) = s(i,:);
+            newFitPop(k) = fitPop(i);
             k = k+1;
             break;
         end
@@ -90,41 +109,80 @@ while k<=popsize
     end
 end
 end
-%% 群体交叉。交叉算子采用选择过后的种群和老种群交叉。或和自身的其它个体交叉，拟采用和自身其它个体交叉
-function sCross = cross(s1, s2, Pcross,crossAlg) % s1是选择之后的种群
-% 输入：s(popsize,numLimit)老种群，sSelect(popsize,numLimit)选择之后的种群，Pcross交叉概率，crossAlg交叉算子选择
+%% 轮盘赌选择交叉算子或变异算子
+function [alg,p] = selectAlg(algs,fit)
+% 输入，algs字符数组，fit自身权重
+% 输出，选中的算法名称alg，标号p
+popsize = length(algs);
+chooseP = fit/sum(fit); % 各自被选到的概率
+chooseP = cumsum(chooseP);  % 每一项为之前所有项之和，如[1 2 3]--> [1 1+2 1+2+3]
+r = rand();
+p =1;alg=algs(1);
+for i=1:popsize
+    if (r < chooseP(i))  % 选中第i个
+        alg = algs(i);
+        p = i;
+        break;
+    end
+end
+
+end
+%% %% 群体交叉。交叉算子采用选择过后的种群和老种群交叉。或和自身的其它个体交叉，拟采用和自身其它个体交叉
+function [sCross,newFitPop,newX] = cross(obj,s1, s2, fitPop, Pcross,X) % s1是选择之后的种群
+% 输入：s(popsize,numLimit)老种群，sSelect(popsize,numLimit)选择之后的种群，Pcross交叉概率，crossAlg交叉算子选择,
+% X算法的选择概率数列,fitPop对应的个体适应度, obj 模型
 % 常数，交叉概率0.4-0.99之间
-% 输出：sCross 经过交叉之后的种群
-if nargin<4
-    crossAlg="PMX";
-end
-switch crossAlg
-    case "PMX"
-        crossHandle = @crossPMX;% 函数句柄
-    case "OX1"
-        crossHandle = @crossOX1;
-    case "OX2"
-        crossHandle = @crossOX2;
-    case "CX"
-        crossHandle = @crossCX;
-    case "PBX"
-        crossHandle = @crossPBX;
-end
-    
+% 输出：sCross 经过交叉之后的种群, newFitPop新的函数值，newX 新的算法选择概率矩阵
+
+
+crossAlgs = ["PMX","OX1","OX2","CX","PBX"];
+chooseNum = ones(1,5); % 选中该算法的个数,防止除数为0,所有的都加一
+upNum = zeros(1,5); % 新解更好的个数
+
 [popsize, numLimit] = size(s1);
 sCross = zeros(popsize, numLimit);
 s2 = s1(randperm(popsize),:); % 这一句是采用自身交叉，打乱顺序，如果想用和老种群交叉，注释掉即可
 pRand = rand(popsize,1);
 for i=1:popsize
+    chooseNum = ones(1,5); % 选中该算法的个数,防止除数为0,所有的都加一
+    upNum = zeros(1,5); % 新解更好的个数
     if pRand(i) < Pcross  % 交叉
-      [sCross(i,:), ~] = crossHandle(s1(i,:),s2(i,:));  % 这里选择交叉算子
+        [crossAlg,p] = selectAlg(crossAlgs,X);
+        crossHandle = @crossPMX;
+        switch crossAlg
+            case "PMX"
+                crossHandle = @crossPMX;% 函数句柄
+            case "OX1"
+                crossHandle = @crossOX1;
+            case "OX2"
+                crossHandle = @crossOX2;
+            case "CX"
+                crossHandle = @crossCX;
+            case "PBX"
+                crossHandle = @crossPBX;
+        end
+%         crossHandle = @crossPMX; % DEBUG
+        chooseNum(p) = chooseNum(p)+1; % 选中的次数加一
+        [sCross(i,:), ~] = crossHandle(s1(i,:),s2(i,:));  % 交叉
+        % 计算交叉之后是否产生了更好的解
+        oldF = fitPop(i); % 老的解
+        plan = decodeFromHA(obj,sCross(i,:));  % 新的解
+        fitPop(i) = ModelFighters(obj, plan);   % 更新新的函数值
+        if fitPop(i)>oldF
+            upNum(p)=upNum(p)+1;  % 产生更好的解的次数加一
+        end
     else
-       sCross(i,:) = s1(i,:);
+        sCross(i,:) = s1(i,:);
     end
 end
+
+deltaX = upNum./chooseNum;
+newX = X + 0.01 .* deltaX ; % 0.5速度
+newX = newX/sum(newX);  % 归一化
+newFitPop = fitPop;
 end
 %% 群体变异
-function sMutate = mutate(s, Pmutate,mutateAlg)
+function [sMutate,newFit] = mutate(obj, s, fitPop, Pmutate,mutateAlg)
 if nargin<3
     mutateAlg="EM";
 end
@@ -152,8 +210,13 @@ pRand = rand(popsize,1);
 for i=1:popsize
     if pRand(i) < Pmutate
         sMutate(i,:) = mutateHandle(s(i,:)); % 算子选择
+        % 计算交叉之后是否产生了更好的解
+%         oldF = fitPop(i); % 老的解
+        plan = decodeFromHA(obj,s(i,:));  % 新的解
+        fitPop(i) = ModelFighters(obj, plan);   % 更新新的函数值
     end
 end
+newFit = fitPop;
 end
 
 % 基本算子部分
