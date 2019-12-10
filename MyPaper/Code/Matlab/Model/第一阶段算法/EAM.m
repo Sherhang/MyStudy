@@ -10,6 +10,6 @@ for i=1:numOfAll
 end
 plot(fEAM,'o');
 [maxF,maxIndex] = max(fEAM)
-bessEAMPlan = allPerms(maxIndex,:);
+bestEAMPlan = allPerms(maxIndex,:) 
 clear allPerms;
 toc
