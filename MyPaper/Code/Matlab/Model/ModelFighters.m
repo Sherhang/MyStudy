@@ -17,9 +17,12 @@ for i=1:size(plan,2)
         T(k) = obj.FTime(p,q); k = k+1;
     end
 end
+% 时间矩阵
+
+
 f2 = std(T);% 时间的标准差，一般是实际数据范围的1/4
 f3 = max(T);% 时间的最大值
-f = 0.8*f1/N + 0.1*(2- f2/obj.Tmax - f3/obj.Tmax);% TODO 这里权重难以确定，如何把f2,f3变换到0-1？
+f = 0.5*f1/N + 0.2*(1- f2/obj.Tmax)+0.3*(1 - f3/obj.Tmax);% TODO 这里权重难以确定，如何把f2,f3变换到0-1？
 end
 
 

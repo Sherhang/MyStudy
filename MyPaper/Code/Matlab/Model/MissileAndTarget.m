@@ -44,7 +44,7 @@ classdef MissileAndTarget
         %% 随机设置态势参I
         function obj = setRand(obj)
             obj.Fighters.p =10*1000 * rand(obj.numOfFighters, 2);
-            obj.Fighters.v = 500* ones(obj.numOfFighters, 1);
+            obj.Fighters.v = 400* ones(obj.numOfFighters, 1);
             obj.Fighters.angle = 0.1*pi*rand(obj.numOfFighters, 1);
             
             obj.Targets.p = 20*1000*rand(obj.numOfTargets, 2);
@@ -56,7 +56,7 @@ classdef MissileAndTarget
             obj.missileList = ones(1,obj.numOfFighters);
             obj.missileList(indexD) = obj.missileList(indexD)+1;
             
-            indexE = randperm(obj.numOfTargets,0);   % ceil(obj.numOfTargets/4), 1/4 对应位置的目标需要2枚导弹
+            indexE = randperm(obj.numOfTargets,2);   % ceil(obj.numOfTargets/4), 1/4 对应位置的目标需要2枚导弹
             obj.targetList = ones(1,obj.numOfTargets);
             obj.targetList(indexE) = obj.targetList(indexE)+1;
             

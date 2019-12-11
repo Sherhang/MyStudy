@@ -9,7 +9,7 @@ file = fopen('log.txt','w');
 % 常量
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 % 初始化
-obj = MissileAndTarget(6,8,7);
+obj = MissileAndTarget(7,8,10);
 obj = setRand(obj);
 % 自定义态势参数
 % obj.Fighters.p =10*1000 * ones(obj.numOfFighters, 2);

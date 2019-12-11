@@ -147,7 +147,7 @@ s2 = s1(randperm(popsize),:); % 这一句是采用自身交叉，打乱顺序，如果想用和老种群
 pRand = rand(popsize,1);
 for i=1:popsize
     chooseNum = ones(1,5); % 选中该算法的个数,防止除数为0,所有的都加一
-    upNum = ones(1,5); % 新解更好的个数
+    upNum = zeros(1,5); % 新解更好的个数
     if pRand(i) < Pcross  % 交叉
         [crossAlg,p] = selectAlg(crossAlgs,X);
         crossHandle = @crossPMX;
@@ -180,7 +180,7 @@ for i=1:popsize
 end
 
 deltaX = upNum./chooseNum;
-newX = X + 0.01 .* deltaX ; % 0.01速度
+newX = X + 0.1 .* deltaX ; % 0.01速度
 newX = newX/sum(newX);  % 归一化
 newFitPop = fitPop;
 end
@@ -192,7 +192,7 @@ sMutate = s;
 pRand = rand(popsize,1);
 for i=1:popsize
     chooseNum = ones(1,7); % 选中该算法的个数,防止除数为0,所有的都加一
-    upNum = ones(1,7); % 新解更好的个数
+    upNum = zeros(1,7);  % 新解更好的个数
     if pRand(i) < Pmutate
          [mutateAlg,p] = selectAlg(algs,X);
          chooseNum(p) = chooseNum(p)+1; % 选中的次数加一
@@ -225,7 +225,7 @@ for i=1:popsize
     end
 end
 deltaX = upNum./chooseNum;
-newX = X + 0.01 .* deltaX ; % 0.01速度
+newX = X + 0.1 .* deltaX ; % 0.01速度
 newX = newX/sum(newX);  % 归一化
 newFit = fitPop;
 

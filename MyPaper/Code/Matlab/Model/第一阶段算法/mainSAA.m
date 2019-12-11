@@ -1,6 +1,5 @@
 
 
-
 T = 100;d =0.95; steps = 200;
 Markov_length=20;Pmutate=0.4;
 algs = ["EM","DM","IM","SIM","IVM","SM","LM"];
@@ -76,7 +75,74 @@ fBestSaveLM = mean(fB);
 fCurrentSaveLM = mean(fC);
 timeLM = mean(t);
 
+minStepsSAA=zeros(7,1);
+fBestSAA=zeros(7,1);
+%-------收敛步数---
+for i=1:steps
+    if abs(fBestSaveEM(i)-fBestSaveEM(steps)) < 0.00001
+        minStepSAAEM = i
+        minStepsSAA(1) = i;
+        fBestSAA(1) = fBestSaveEM(steps);
+        break;
+    end
+end
+for i=1:steps
+    if abs(fBestSaveDM(i)-fBestSaveDM(steps)) < 0.00001
+        minStepSAADM = i
+        minStepsSAA(2) = i;
+        fBestSAA(2) = fBestSaveDM(steps);
+        break;
+    end
+end
+for i=1:steps
+    if abs(fBestSaveIM(i)-fBestSaveIM(steps)) < 0.00001
+        minStepSAAIM = i
+        minStepsSAA(3) = i;
+        fBestSAA(3) = fBestSaveIM(steps);
+        break;
+    end
+end
+for i=1:steps
+    if abs(fBestSaveSIM(i)-fBestSaveSIM(steps)) < 0.00001
+        minStepSAASIM = i
+        minStepsSAA(4) = i;
+        fBestSAA(4) = fBestSaveSIM(steps);
+        break;
+    end
+end
+for i=1:steps
+    if abs(fBestSaveIVM(i)-fBestSaveIVM(steps)) < 0.00001
+        minStepSAAIVM = i
+        minStepsSAA(5) = i;
+        fBestSAA(5) = fBestSaveIVM(steps);
+        break;
+    end
+end
+for i=1:steps
+    if abs(fBestSaveSM(i)-fBestSaveSM(steps)) < 0.00001
+        minStepSAASM = i
+        minStepsSAA(6) = i;
+        fBestSAA(6) = fBestSaveSM(steps);
+        break;
+    end
+end
+for i=1:steps
+    if abs(fBestSaveLM(i)-fBestSaveLM(steps)) < 0.00001
+        minStepSAALM = i
+        minStepsSAA(7) = i;
+        fBestSAA(7) = fBestSaveLM(steps);
+        break;
+    end
+end
+timeSAA = [timeEM;timeDM;timeIM;timeSIM;timeIVM;timeSM;timeLM]
+
+
+
+
+%----------plot-------
 figure1 = figure('color',[1 1 1]);
+set(gcf,'unit','normalized','position',[0.2,0.2,0.5,0.45]);%以（0.2，0.2）为原点，长0.5，宽0.45
+% set (gca,'position',[0.1,0.1,0.9,0.8] );
 plot(fBestSaveEM );hold on;
 plot(fBestSaveDM );hold on;
 plot(fBestSaveIM );hold on;
@@ -92,6 +158,11 @@ plot(fCurrentSaveSIM);hold on;
 plot(fCurrentSaveIVM);hold on;
 plot(fCurrentSaveSM);hold on;
 plot(fCurrentSaveLM);hold on;
+
+legend("EM最优值","DM最优值","IM最优值","SIM最优值","IVM最优值","SM最优值","LM最优值",...
+    "EM当前值","DM当前值","IM当前值","SIM当前值","IVM当前值","SM当前值","LM当前值");
+axis([0 240 0.47 0.54]);
+print(figure1,'-dpng','-r300','./png/SAA.png')   % 保存到工作目录下
 
 
 
