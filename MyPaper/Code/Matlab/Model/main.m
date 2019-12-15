@@ -41,6 +41,17 @@ fightersSave.angle(1,:) = obj.Fighters.angle';
 targetsSave.angle(1,:) = obj.Targets.angle';
 missilesSave.angle(1,:) = obj.Missiles.angle';
 
+% 启发式算法
+% 产生初始种群
+numLimit = max(obj.numOfMissiles, sum(obj.targetList));
+s = zeros(20,numLimit); % 预分配内存
+for i=1:20
+    s(i,:) = randperm(numLimit);
+end
+planHA = SAGA(s,obj,20,200,0.4,0.4, "PMX", "EM",100,0.95);
+planVir = decodeFromHA(obj,planHA);
+planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
+
 i=1;
 for i=1:stepFighters
     % 保存变量
@@ -50,12 +61,17 @@ for i=1:stepFighters
     targetsSave.angle(i,:,:) = obj.Targets.angle';
     
     f1 = getOptmizeMatrixOfFighterAndTarget(obj);
-    if  i==1   || rem(i,10000)==0  % rem%10 == 0
-        [mat, matT] =  getOptmizeMatrixOfFighterAndTarget(obj);
-        planVir = quantumMinAssign(max(max(mat))-mat);
+    %     if  i==1   || rem(i,10000)==0  % rem%10 == 0
+    %         [mat, matT] =  getOptmizeMatrixOfFighterAndTarget(obj);
+    %         planVir = quantumMinAssign(max(max(mat))-mat);
+    %         planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
+    %         obj.FAdvance = mat;% 更新虚拟优势矩阵
+    %         obj.FTime = matT;
+    %     end
+    if  i==1   || rem(i,500)==0  % rem%10 == 0  每隔500步重新算一次
+        planHA = SAGA(s,obj,20,100,0.4,0.4, "PMX", "EM",100,0.95);
+        planVir = decodeFromHA(obj,planHA);
         planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
-        obj.FAdvance = mat;% 更新虚拟优势矩阵
-        obj.FTime = matT;
     end
     obj = fighterMoveByPNG(obj, planReal);
     obj = targetMove(obj);
@@ -96,7 +112,7 @@ for i=stepFighters+1:steps
     if rem(i,100)==0 
         mat =  getOptmizeMatrixOfMissileAndTarget(obj);
         missilePlan = quantumMinAssign(max(max(mat))-mat);
-        missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan)  % 解码
+        missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan) ; % 解码
         if  sum(sum(missilePlanReal~=missilePlanRealPer)) ~= 0  % 且方案真的变了
             if canChange(obj, missilePlanReal) == 0  % 不能改目标，则取回原来的方案
                 missilePlanReal=missilePlanRealPer;

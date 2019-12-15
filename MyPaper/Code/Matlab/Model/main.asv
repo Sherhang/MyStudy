@@ -9,7 +9,7 @@ file = fopen('log.txt','w');
 % 常量
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 % 初始化
-obj = MissileAndTarget(6,8,8);
+obj = MissileAndTarget(7,8,10);
 obj = setRand(obj);
 % 自定义态势参数
 % obj.Fighters.p =10*1000 * ones(obj.numOfFighters, 2);
@@ -41,6 +41,8 @@ fightersSave.angle(1,:) = obj.Fighters.angle';
 targetsSave.angle(1,:) = obj.Targets.angle';
 missilesSave.angle(1,:) = obj.Missiles.angle';
 
+% 启发式算法
+[planGA_PMX_EM, fB(i,:),fM(i,:), t(i)] = SAGA(obj,20,200,0.4,0.4, "PMX", "EM",100,0.95);
 i=1;
 for i=1:stepFighters
     % 保存变量
@@ -53,7 +55,7 @@ for i=1:stepFighters
     if  i==1   || rem(i,10000)==0  % rem%10 == 0
         [mat, matT] =  getOptmizeMatrixOfFighterAndTarget(obj);
         planVir = quantumMinAssign(max(max(mat))-mat);
-        planReal = decodePlanFightersToTargets(obj, planVir); % 解码
+        planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
         obj.FAdvance = mat;% 更新虚拟优势矩阵
         obj.FTime = matT;
     end
@@ -93,10 +95,10 @@ for i=stepFighters+1:steps
         missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan); % 解码
     end
     missilePlanRealPer = missilePlanReal; % 原来的方向
-    if rem(i,50)==0 
+    if rem(i,100)==0 
         mat =  getOptmizeMatrixOfMissileAndTarget(obj);
         missilePlan = quantumMinAssign(max(max(mat))-mat);
-        missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan)% 解码
+        missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan)  % 解码
         if  sum(sum(missilePlanReal~=missilePlanRealPer)) ~= 0  % 且方案真的变了
             if canChange(obj, missilePlanReal) == 0  % 不能改目标，则取回原来的方案
                 missilePlanReal=missilePlanRealPer;
