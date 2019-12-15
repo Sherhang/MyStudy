@@ -1,8 +1,8 @@
 % 模拟退火遗传算法，退火对象为变异算子和交叉算子
-function [planSAGA, fBestSave,fMeanSave, time] = SAGA(s,obj,popsize,steps,Pcross,Pmutate, crossAlg, mutateAlg,Top,Dop)
+function [planSAGA, sNew,fBestSave,fMeanSave, time] = SAGA(s,obj,popsize,steps,Pcross,Pmutate, crossAlg, mutateAlg,Top,Dop)
 % 这个算法多了一个初始种群的参数
 % 输入obj，模型
-%         遗传算法的参数，s,初始种群，种群数量popsize，迭代次数steps，交叉概率Pcross，变异概率Pmutate，交叉操作选择crossAlg，变异操作选择mutateAlg,
+%         遗传算法的参数，s,初始种群， sNew最后的种群，种群数量popsize，迭代次数steps，交叉概率Pcross，变异概率Pmutate，交叉操作选择crossAlg，变异操作选择mutateAlg,
 %         Top, 退火初始温度， Dop, 退火衰减系数
 %         通常取交叉概率（0.4-0.99，变异概率（0.001-0.2）
 %                                                             
@@ -69,6 +69,7 @@ time = toc; % 足够精确
 [fBestSave(step+1), maxIndex] =  max(fitPop);
 fMeanSave(step+1) = mean(fitPop);
 planSAGA = s(maxIndex,:); % 最优解保护
+sNew = s;
 end
 % 基本算子部分
 %% 轮盘赌选择算子,适应值越大，越容易被选到，最后适应值大的个数多

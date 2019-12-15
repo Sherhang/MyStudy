@@ -3,15 +3,14 @@
 % 还可以把总导弹数量设置的比需要攻击的数量少，仿真发现，当虚拟导弹数量大于等于虚拟目标数量，几乎不会发生方案变化的情况。
 
 %% -----第一阶段，载机飞向目标，当所有载机进入可攻击距离，发射导弹------
-clear;
-clc;
+
 file = fopen('log.txt','w');
 % 常量
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 % 初始化
-obj = MissileAndTarget(7,8,10);
-obj = setRand(obj);
-% 自定义态势参数
+% obj = MissileAndTarget(7,8,10);
+% obj = setRand(obj);
+% 自定义态势参数, 请直接加载第一阶段速度4模型数据
 % obj.Fighters.p =10*1000 * ones(obj.numOfFighters, 2);
 % obj.Fighters.p(:,2) = 5*1000*(1:obj.numOfFighters);
 % obj.Fighters.v = 400* ones(obj.numOfFighters, 1);
@@ -31,7 +30,7 @@ plan = [];missilePlan = [];
 
 %-----位置保存-------
 % 迭代次数
-stepFighters = 5000;
+stepFighters = 10000;
 stepMissiles = 6000;
 steps = stepFighters+stepMissiles;
 fightersSave.p(1,:,:) = obj.Fighters.p;
@@ -48,9 +47,14 @@ s = zeros(20,numLimit); % 预分配内存
 for i=1:20
     s(i,:) = randperm(numLimit);
 end
-planHA = SAGA(s,obj,20,200,0.4,0.4, "PMX", "EM",100,0.95);
+[planHA,s] = SAGA(s,obj,20,200,0.4,0.4, "PMX", "EM",100,0.95);
 planVir = decodeFromHA(obj,planHA);
 planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
+fprintf(file,"targets= ");
+fprintf(file,num2str(planReal(1,:)));
+fprintf(file,"plan1= ");
+fprintf(file,num2str(planReal(2,:)));
+fprintf(file,"\n");
 
 i=1;
 for i=1:stepFighters
@@ -68,10 +72,13 @@ for i=1:stepFighters
     %         obj.FAdvance = mat;% 更新虚拟优势矩阵
     %         obj.FTime = matT;
     %     end
-    if  i==1   || rem(i,500)==0  % rem%10 == 0  每隔500步重新算一次
-        planHA = SAGA(s,obj,20,100,0.4,0.4, "PMX", "EM",100,0.95);
+    if  i==1   || rem(i,50)==0  % rem%10 == 0  每隔50步重新算一次,即1s 算一次
+        [planHA,s]= SAGA(s,obj,20,10,0.4,0.4, "PMX", "EM",1,0.95);
         planVir = decodeFromHA(obj,planHA);
         planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
+        fprintf(file,"plan1= ");
+        fprintf(file,num2str(planReal(2,:)));
+        fprintf(file,"\n");
     end
     obj = fighterMoveByPNG(obj, planReal);
     obj = targetMove(obj);
@@ -153,6 +160,17 @@ end
 %% --------plot----------
 %-------------模型图-------------
 figure1 = figure('color',[1 1 1]);
+% 用来legend
+x = fightersSave.p(:,1,1); % 第一架载机
+y = fightersSave.p(:,1,2);
+p1 = plot(x,y,'r');  hold on;
+x = missilesSave.p(:,1,1);
+y = missilesSave.p(:,1,2);
+p2 = plot(x,y,'b');  hold on;
+x = targetsSave.p(:,1,1);
+y = targetsSave.p(:,1,2);
+p3 = plot(x,y,'color','g');hold on;
+
 % 载机
 for i=1:obj.numOfFighters
     x = fightersSave.p(:,i,1);
@@ -188,3 +206,5 @@ x = targetsSave.p(1,:,1);
 y = targetsSave.p(1,:,2);
 quiver(x',y', cos(targetsSave.angle(1,:))',sin(targetsSave.angle(1,:))',0.3,'color','g');
 hold on;
+
+legend([p1,p2,p3],["载机","导弹","目标"],'Location','northwest');
