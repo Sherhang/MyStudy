@@ -52,10 +52,10 @@ plot(fBestSaveSAGA_OX2_DM);hold on;
 plot(fMeanSaveACO);hold on;
 plot(fMeanSaveGA_PMX_SIM);hold on;
 plot(fMeanSaveSAGA_OX2_DM);hold on;
-legend("ACOVFSAGA最优个体","GA\_PMX\_SIM最优个体","SAGA\_OX2\_EM最优个体"...
-    ,"ACOVFSAGA种群均值","GA\_PMX\_SIM种群均值","SAGA\_OX2\_EM种群均值");
+legend("ACOSAGA最优个体","GA\_PMX\_SIM最优个体","SAGA\_OX2\_EM最优个体"...
+    ,"ACOSAGA种群均值","GA\_PMX\_SIM种群均值","SAGA\_OX2\_EM种群均值");
 set(gcf,'unit','normalized','position',[0.2,0.2,0.5,0.45]);%以（0.2，0.2）为原点，长0.5，宽0.45
-axis([0 280 0.47 0.55]);
+axis([0 200 0.47 0.58]);
 print(figure1,'-dpng','-r300','./png/ACO.png')   % 保存到工作目录下
 
 figure2=figure('color',[1 1 1]);

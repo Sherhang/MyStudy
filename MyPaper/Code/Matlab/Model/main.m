@@ -8,7 +8,7 @@ file = fopen('log.txt','w');
 % 常量
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 % 初始化
-% obj = MissileAndTarget(7,8,10);
+% obj = MissileAndTarget(7,8,11);
 % obj = setRand(obj);
 % 自定义态势参数, 请直接加载第一阶段速度4模型数据
 % obj.Fighters.p =10*1000 * ones(obj.numOfFighters, 2);
@@ -52,7 +52,7 @@ planVir = decodeFromHA(obj,planHA);
 planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
 fprintf(file,"targets= ");
 fprintf(file,num2str(planReal(1,:)));
-fprintf(file,"plan1= ");
+fprintf(file,"\n plan1= \n");
 fprintf(file,num2str(planReal(2,:)));
 fprintf(file,"\n");
 
@@ -65,20 +65,27 @@ for i=1:stepFighters
     targetsSave.angle(i,:,:) = obj.Targets.angle';
     
     f1 = getOptmizeMatrixOfFighterAndTarget(obj);
-    %     if  i==1   || rem(i,10000)==0  % rem%10 == 0
-    %         [mat, matT] =  getOptmizeMatrixOfFighterAndTarget(obj);
-    %         planVir = quantumMinAssign(max(max(mat))-mat);
-    %         planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
-    %         obj.FAdvance = mat;% 更新虚拟优势矩阵
-    %         obj.FTime = matT;
-    %     end
+        if  i==1   || rem(i,50)==0  % rem%10 == 0
+            [mat, matT] =  getOptmizeMatrixOfFighterAndTarget(obj);
+            planVir = quantumMinAssign(max(max(mat))-mat);
+            planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
+            obj.FAdvance = mat;% 更新虚拟优势矩阵
+            obj.FTime = matT;
+        end
     if  i==1   || rem(i,50)==0  % rem%10 == 0  每隔50步重新算一次,即1s 算一次
         [planHA,s]= SAGA(s,obj,20,10,0.4,0.4, "PMX", "EM",1,0.95);
         planVir = decodeFromHA(obj,planHA);
         planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
-        fprintf(file,"plan1= ");
-        fprintf(file,num2str(planReal(2,:)));
-        fprintf(file,"\n");
+        % 保存结果
+        cc = planReal(2,:);
+        for ccx =1:length(cc)
+            fprintf(file,"| ");
+            fprintf(file,'%d',cc(ccx));
+        end
+        fprintf(file,"| \n");
+        % 保存结果end
+%         fprintf(file,num2str(planReal(2,:)));
+%         fprintf(file,"\n");
     end
     obj = fighterMoveByPNG(obj, planReal);
     obj = targetMove(obj);
@@ -102,7 +109,7 @@ for i=1:stepFighters
 end
 
 
-dAng =0.01*(rand(obj.numOfTargets,1)-0.5);  % 目标随机加速度引起的角度变化
+dAng =0.02*(rand(obj.numOfTargets,1)-0.5);  % 目标随机加速度引起的角度变化
 for i=stepFighters+1:steps
     targetsSave.p(i,:,:) = obj.Targets.p;
     targetsSave.angle(i,:) = obj.Targets.angle';
@@ -114,22 +121,21 @@ for i=stepFighters+1:steps
         mat =  getOptmizeMatrixOfMissileAndTarget(obj);
         missilePlan = quantumMinAssign(max(max(mat))-mat);
         missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan); % 解码
+        fprintf(file,"\n\n\n missilePlan0=");
+        fprintf(file,num2str(missilePlanReal(2,:)));fprintf(file,"\n");
     end
     missilePlanRealPer = missilePlanReal; % 原来的方向
-    if rem(i,100)==0 
+    if rem(i,50)==0 
         mat =  getOptmizeMatrixOfMissileAndTarget(obj);
         missilePlan = quantumMinAssign(max(max(mat))-mat);
-        missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan) ; % 解码
+        missilePlanReal = decodePlanMissilesToTargets(obj, missilePlan)  % 解码
         if  sum(sum(missilePlanReal~=missilePlanRealPer)) ~= 0  % 且方案真的变了
             if canChange(obj, missilePlanReal) == 0  % 不能改目标，则取回原来的方案
                 missilePlanReal=missilePlanRealPer;
             else
-                fprintf("Change");fprintf("\n");
                 fprintf(file,"Change");fprintf(file,"\n");
-                fprintf(file,"oldPlan=");
-                fprintf(file,num2str(missilePlanRealPer));fprintf(file,"\n");
                 fprintf(file,"currentPlan=");
-                fprintf(file,num2str(missilePlanReal));fprintf(file,"\n");
+                fprintf(file,num2str(missilePlanReal(2,:)));fprintf(file,"\n");
                 
             end
         end
