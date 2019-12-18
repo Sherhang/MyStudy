@@ -17,7 +17,7 @@ def main():
     problem = pd.read_csv('assets\china.csv',encoding='gbk')  # 另一种方式，直接读入表格
     print(problem)
 
-    route = som(problem, 100000)   # 第二参数是迭代次数，route是list
+    route = som(problem, 10000)   # 第二参数是迭代次数，route是list
     np.savetxt('out_files\ route.txt', route, delimiter=',')
     print("route:", route)
 
@@ -37,7 +37,7 @@ def som(problem, iterations, learning_rate=0.8):
     cities[['x', 'y']] = normalize(cities[['x', 'y']])  # 单位化
 
     # The population size is 8 times the number of cities   神经元个数
-    n = cities.shape[0] * 8
+    n = cities.shape[0] * 3
     #n = cities.shape[0] * 3   # 测试用，by EE526
 
     # Generate an adequate network of neurons:

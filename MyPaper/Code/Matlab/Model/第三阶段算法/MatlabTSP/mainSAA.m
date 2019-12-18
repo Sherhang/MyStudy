@@ -171,12 +171,12 @@ for i=1:amount
 end
 
 
-a = 0.9;       %温度衰减函数的参数,一般文献取0.9以上
-t0 = 10000000;        %初始温度
-tf = 0.0001;         %终止温度
+a = 0.95;       %温度衰减函数的参数,一般文献取0.9以上
+t0 = 100000;        %初始温度
+tf = 0.01;         %终止温度
 t = t0;
 flag=0;
-Markov_length = 60000;  %Markov链长度
+Markov_length = 6000;  %Markov链长度
 
 sol_new = 1:amount;         %产生初始解，sol_new是每次产生的新解
 sol_current = sol_new;      %sol_current是当前解
@@ -263,23 +263,23 @@ end
 toc
 %编码转换路径，默认从1开始
 path=TSPpath_decode( sol_best);
-disp('最优解为:');
-disp(path);
+% disp('最优解为:');
+% disp(path);
 disp('最短距离:');
-disp(E_best);
+fprintf('%.5f\n',E_best);
 
 figure(1)
 P=city;N=amount;minplan=sol_best;
 plot(P(:,1),P(:,2),'ro');
 hold on
 for i=1:N-1
-    line([P(minplan(i),1),P(minplan(i+1),1)],[P(minplan(i),2),P(minplan(i+1),2)]);
+    line([P(minplan(i),1),P(minplan(i+1),1)],[P(minplan(i),2),P(minplan(i+1),2)],'color','k');
 end
 line([P(minplan(1),1),P(minplan(N),1)],[P(minplan(1),2),P(minplan(N),2)]);
-for i=1:N
-    str=sprintf('%d',i);
-    text(P(i,1)+0.3,P(i,2),str);
-end
+% for i=1:N
+%     str=sprintf('%d',i);
+%     text(P(i,1)+0.3,P(i,2),str);
+% end
 
 
 function [ path ] =TSPpath_decode( path0 )
