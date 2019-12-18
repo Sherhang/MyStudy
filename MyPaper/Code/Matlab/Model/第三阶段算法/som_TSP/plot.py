@@ -22,16 +22,16 @@ def plot_network(cities, neurons, name='out_files\city_network.png', ax=None):
 
         axis.scatter(cities['x'], cities['y'], color='red', s=4)
         axis.scatter(neurons[:, 0], neurons[:, 1], color='blue', s=4)  # 测试用
-        for i in range(neurons.shape[0]):
-            axis.annotate(str(i), xy=(neurons[i,:]), xytext=(neurons[i, :]+0.01))  # 这里xy是需要标记的坐标，
+        # for i in range(neurons.shape[0]):
+        #     axis.annotate(str(i), xy=(neurons[i,:]), xytext=(neurons[i, :]+0.01))  # 添加序号，这里xy是需要标记的坐标，
         #axis.plot(neurons[:, 0], neurons[:, 1], 'r.', ls='-', color='#0063ba', markersize=2)
 
         plt.savefig(name)   # modified by EE526
 
-        #plt.ion()   # added by EE526
-        #plt.show()
-        #plt.pause(1)  # 显示秒数
-        #plt.clf()
+        # plt.ion()   # added by EE526
+        # plt.show()
+        # plt.pause(1)  # 显示秒数
+        # plt.clf()
         plt.close()
 
 

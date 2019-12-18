@@ -1,6 +1,7 @@
 from sys import argv
 
 import numpy as np
+import pandas as pd
 
 from io_helper import read_tsp, normalize
 from neuron import generate_network, get_neighborhood, get_route
@@ -12,7 +13,8 @@ def main():
      #   print("inCorrect use: python src/main.py <filename>.tsp")
       #  return -1
 
-    problem = read_tsp('assets\mytest_bier127.tsp')  # 打开文件，problem是DataFrame格式
+    problem = read_tsp('assets\qa194.tsp')  # 打开文件，problem是DataFrame格式
+    problem = pd.read_csv('assets\china.csv',encoding='gbk')  # 另一种方式，直接读入表格
     print(problem)
 
     route = som(problem, 100000)   # 第二参数是迭代次数，route是list
@@ -32,7 +34,7 @@ def som(problem, iterations, learning_rate=0.8):
     # Obtain the normalized set of cities (w/ coord in [0,1])
     cities = problem.copy()
 
-    cities[['x', 'y']] = normalize(cities[['x', 'y']])
+    cities[['x', 'y']] = normalize(cities[['x', 'y']])  # 单位化
 
     # The population size is 8 times the number of cities   神经元个数
     n = cities.shape[0] * 8
