@@ -44,7 +44,7 @@ def som(problem, iterations, learning_rate=0.8):
     #n = cities.shape[0] * 3   # 测试用，by EE526
 
     # Generate an adequate network of neurons:
-    network = generate_network(cities, n, c=2)
+    network = generate_network(cities, n, c=4)
     print('Network of {} neurons created. Starting the iterations:'.format(n))
 
     for i in range(iterations):

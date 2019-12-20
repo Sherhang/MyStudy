@@ -13,11 +13,11 @@ def main():
      #   print("inCorrect use: python src/main.py <filename>.tsp")
       #  return -1
 
-    problem = read_tsp('assets\qa194.tsp')  # 打开文件，problem是DataFrame格式
-    problem = pd.read_csv('assets\china.csv',encoding='gbk')  # 另一种方式，直接读入表格
+    problem = read_tsp('assets/att48.tsp')  # 打开文件，problem是DataFrame格式
+    # problem = pd.read_csv('assets/a280.csv', encoding='utf-8')  # 另一种方式，直接读入表格
     print(problem)
 
-    route = som(problem, 10000)   # 第二参数是迭代次数，route是list
+    route = som(problem, 100000)   # 第二参数是迭代次数，route是list
     np.savetxt('out_files\ route.txt', route, delimiter=',')
     print("route:", route)
 
@@ -60,8 +60,8 @@ def som(problem, iterations, learning_rate=0.8):
         n = n * 0.9997
 
         # Check for plotting interval
-        if not i % 1000:      # 每隔1000次画出神经元图像
-            plot_network(cities, network, name='out_files\process\city_network%d.png'%(i//1000))
+        if not i % 100:      # 每隔1000次画出神经元图像
+            plot_network(cities, network, name='out_files\process\city_network%d.png'%(i//100))
 
         # Check if any parameter has completely decayed.
         if n < 1:

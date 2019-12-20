@@ -14,8 +14,8 @@ def main():
      #   print("inCorrect use: python src/main.py <filename>.tsp")
       #  return -1
     time1 = time.time()
-    problem = read_tsp('assets\qa194.tsp')  # 打开文件，problem是DataFrame格式
-    problem = pd.read_csv('assets\china.csv',encoding='gbk')  # 另一种方式，直接读入表格
+    problem = read_tsp('assets/att48.tsp')  # 打开文件，problem是DataFrame格式
+    # problem = pd.read_csv('assets\china.csv',encoding='gbk')  # 另一种方式，直接读入表格
     # print(problem)
 
     route = som(problem, 10000)   # 第二参数是迭代次数，route是list
@@ -40,7 +40,7 @@ def som(problem, iterations, learning_rate=0.8):
 
 
     # The population size is 8 times the number of cities   神经元个数
-    n = cities.shape[0] * 3
+    n = cities.shape[0] * 4
 
     # Generate an adequate network of neurons:
     network = generate_network(cities, n, c=3)
@@ -58,7 +58,7 @@ def som(problem, iterations, learning_rate=0.8):
         winner_idx = select_closest(network, city)
         # print(winner_idx)  # DEBUG
         # 改进方案, 获胜神经元距离小于阈值，则直接获胜
-        if np.linalg.norm(city - network[winner_idx, :], axis=1) < 0.001:  # 求距离
+        if np.linalg.norm(city - network[winner_idx, :], axis=1) < 0.005:  # 求距离
             network[winner_idx, :] = city
             # print(winner_idx)
         else:

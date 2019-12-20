@@ -73,6 +73,7 @@ legend('PMX\_EM最优个体','OX1\_EM最优个体','OX2\_EM最优个体','CX\_EM最优个体','P
 
 set(gcf,'unit','normalized','position',[0.2,0.2,0.5,0.45]);%以（0.2，0.2）为原点，长0.5，宽0.45
 axis([0 260 0.47 0.55]);
+xlabel("step");ylabel("适应度");
 print(figure1,'-dpng','-r300','./png/GACross.png')   % 保存到工作目录下
 
 %-----------比较变异算子---------
@@ -169,7 +170,7 @@ legend('PMX\_EM最优个体','PMX\_DM最优个体','PMX\_IM最优个体','PMX\_SIM最优个体'.
    ,'PMX\_EM种群均值','PMX\_DM种群均值','PMX\_IM种群均值','PMX\_SIM种群均值'...
     ,'PMX\_IVM种群均值','PMX\_SM种群均值','PMX\_LM种群均值');
 set(gcf,'unit','normalized','position',[0.2,0.2,0.5,0.45]);%以（0.2，0.2）为原点，长0.5，宽0.45
-axis([0 260 0.47 0.55]);
+axis([0 260 0.47 0.55]);xlabel("step");ylabel("适应度");
 print(figure2,'-dpng','-r300','./png/GAMutate.png')   % 保存到工作目录下
 
 % 共35种算法汇总

@@ -15,12 +15,12 @@ def plot_network(cities, neurons, name='out_files\city_network.png', ax=None):
 
     if not ax:
         fig = plt.figure(figsize=(5, 5), frameon = False)
-        axis = fig.add_axes([0, 0, 1.1, 1.1])
+        axis = fig.add_axes([0,0,1,1])
 
         axis.set_aspect('equal', adjustable='datalim')
         plt.axis('off')
 
-        axis.scatter(cities['x'], cities['y'], color='red', s=4)
+        axis.scatter(cities['x'], cities['y'],  s=6, color='red', marker='^')
         axis.scatter(neurons[:, 0], neurons[:, 1], color='black', s=4)  # 测试用
         # for i in range(neurons.shape[0]):
         #     axis.annotate(str(i), xy=(neurons[i,:]), xytext=(neurons[i, :]+0.01))  # 添加序号，这里xy是需要标记的坐标，
@@ -33,11 +33,13 @@ def plot_network(cities, neurons, name='out_files\city_network.png', ax=None):
         # plt.pause(1)  # 显示秒数
         # plt.clf()
         plt.close()
+
+
+
     else:
         ax.scatter(cities['x'], cities['y'], color='red', s=4)
         ax.plot(neurons[:,0], neurons[:,1], 'r.', ls='-', color='#0063ba', markersize=2)
         return ax
-
 
 def plot_route(cities, route, name='out_files\ route.png', ax=None):
     """Plot a graphical representation of the route obtained"""
@@ -45,12 +47,12 @@ def plot_route(cities, route, name='out_files\ route.png', ax=None):
 
     if not ax:
         fig = plt.figure(figsize=(5, 5), frameon = False)
-        axis = fig.add_axes([0, 0, 1.1, 1.1])
+        axis = fig.add_axes([0,0,1,1])
 
         axis.set_aspect('equal', adjustable='datalim')
-        plt.axis('on')
+        plt.axis('off')
 
-        axis.scatter(cities['x'], cities['y'], color='red', s=4)
+        axis.scatter(cities['x'], cities['y'], s=6, color='red', marker='^')
         route = cities.reindex(route)
         route.loc[route.shape[0]] = route.iloc[0]
         axis.plot(route['x'], route['y'], color='black', linewidth=1)

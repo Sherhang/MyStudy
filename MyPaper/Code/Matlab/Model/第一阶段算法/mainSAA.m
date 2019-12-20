@@ -161,7 +161,7 @@ plot(fCurrentSaveLM);hold on;
 
 legend("EM最优值","DM最优值","IM最优值","SIM最优值","IVM最优值","SM最优值","LM最优值",...
     "EM当前值","DM当前值","IM当前值","SIM当前值","IVM当前值","SM当前值","LM当前值");
-axis([0 240 0.47 0.54]);
+axis([0 240 0.47 0.54]);xlabel("step");ylabel("适应度");
 print(figure1,'-dpng','-r300','./png/SAA.png')   % 保存到工作目录下
 
 

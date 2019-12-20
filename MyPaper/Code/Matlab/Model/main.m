@@ -8,8 +8,8 @@ file = fopen('log.txt','w');
 % 常量
 MaxDisOfMissile = 50*1000;    % 导弹最大攻击距离
 % 初始化
-% obj = MissileAndTarget(7,8,11);
-% obj = setRand(obj);
+obj = MissileAndTarget(5,5,10);
+obj = setRand(obj);
 % 自定义态势参数, 请直接加载第一阶段速度4模型数据
 % obj.Fighters.p =10*1000 * ones(obj.numOfFighters, 2);
 % obj.Fighters.p(:,2) = 5*1000*(1:obj.numOfFighters);
@@ -65,7 +65,7 @@ for i=1:stepFighters
     targetsSave.angle(i,:,:) = obj.Targets.angle';
     
     f1 = getOptmizeMatrixOfFighterAndTarget(obj);
-        if  i==1   || rem(i,50)==0  % rem%10 == 0
+        if  i==1   %|| rem(i,50)==0  % rem%10 == 0
             [mat, matT] =  getOptmizeMatrixOfFighterAndTarget(obj);
             planVir = quantumMinAssign(max(max(mat))-mat);
             planReal = decodePlanFightersToTargets(obj, planVir)  % 解码
@@ -109,7 +109,7 @@ for i=1:stepFighters
 end
 
 
-dAng =0.02*(rand(obj.numOfTargets,1)-0.5);  % 目标随机加速度引起的角度变化
+dAng =0.01*(rand(obj.numOfTargets,1)-0.5);  % 目标随机加速度引起的角度变化
 for i=stepFighters+1:steps
     targetsSave.p(i,:,:) = obj.Targets.p;
     targetsSave.angle(i,:) = obj.Targets.angle';
@@ -213,4 +213,20 @@ y = targetsSave.p(1,:,2);
 quiver(x',y', cos(targetsSave.angle(1,:))',sin(targetsSave.angle(1,:))',0.3,'color','g');
 hold on;
 
-legend([p1,p2,p3],["载机","导弹","目标"],'Location','northwest');
+%% 第三阶段
+city = zeros(obj.numOfTargets+1,2);
+city(1,:) = obj.Fighters.p(1,:) + obj.Fighters.v(1)*(steps-stepFighters)*obj.dT*...
+          [cos(obj.Fighters.angle(1)),sin(obj.Fighters.angle(1))]; % 出发点坐标假定是载机可能移动到的距离
+city(2:obj.numOfTargets+1,:) = obj.Targets.p;
+% plot
+[fTSPBest,xTSPBest] = TSPSA(city, 10000, 0.95, 0.01, 6000);
+fprintf("最短路径长度为%f\n", fTSPBest);
+P=city;N=obj.numOfTargets+1;minplan=xTSPBest;
+pp1 = plot(P(1,1),P(1,2),'rp','MarkerFaceColor','r');hold on;
+pp2 = plot(P(2:N,1),P(2:N,2),'r^','MarkerFaceColor','r');hold on;
+for i=1:N-1
+    line([P(minplan(i),1),P(minplan(i+1),1)],[P(minplan(i),2),P(minplan(i+1),2)],'color','k');
+end
+pp3 = line([P(minplan(1),1),P(minplan(N),1)],[P(minplan(1),2),P(minplan(N),2)],'color','k');
+xlabel("x/m");ylabel("y/m");
+legend([p1,p2,p3,pp1,pp2,pp3],["载机","导弹","目标","出发点","侦查点","侦查路线"],'Location','northwest');hold on;

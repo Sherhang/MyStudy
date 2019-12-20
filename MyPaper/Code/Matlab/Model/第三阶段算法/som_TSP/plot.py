@@ -20,8 +20,8 @@ def plot_network(cities, neurons, name='out_files\city_network.png', ax=None):
         axis.set_aspect('equal', adjustable='datalim')
         plt.axis('off')
 
-        axis.scatter(cities['x'], cities['y'], color='red', s=4)
-        axis.scatter(neurons[:, 0], neurons[:, 1], color='blue', s=4)  # 测试用
+        axis.scatter(cities['x'], cities['y'],  s=6, color='red', marker='^')
+        axis.scatter(neurons[:, 0], neurons[:, 1], color='black', s=4)  # 测试用
         # for i in range(neurons.shape[0]):
         #     axis.annotate(str(i), xy=(neurons[i,:]), xytext=(neurons[i, :]+0.01))  # 添加序号，这里xy是需要标记的坐标，
         #axis.plot(neurons[:, 0], neurons[:, 1], 'r.', ls='-', color='#0063ba', markersize=2)
@@ -52,10 +52,10 @@ def plot_route(cities, route, name='out_files\ route.png', ax=None):
         axis.set_aspect('equal', adjustable='datalim')
         plt.axis('off')
 
-        axis.scatter(cities['x'], cities['y'], color='red', s=4)
+        axis.scatter(cities['x'], cities['y'], s=6, color='red', marker='^')
         route = cities.reindex(route)
         route.loc[route.shape[0]] = route.iloc[0]
-        axis.plot(route['x'], route['y'], color='purple', linewidth=1)
+        axis.plot(route['x'], route['y'], color='black', linewidth=1)
 
         #plt.savefig(name, bbox_inches='tight', pad_inches=0, dpi=200)
         plt.savefig(name)

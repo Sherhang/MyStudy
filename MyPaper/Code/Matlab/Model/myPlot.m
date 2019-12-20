@@ -37,7 +37,8 @@ y = targetsSave.p(1,:,2);
 quiver(x',y', cos(targetsSave.angle(1,:))',sin(targetsSave.angle(1,:))',0.3,'color','g');
 hold on;
 legend([p1,p3],["载机","目标"],'Location','northwest');
-print(figure1,'-dpng','-r300','./png/MoreProcess5.png')   % 保存到工作目录下
+xlabel("x/m");ylabel("y/m");
+print(figure1,'-dpng','-r300','./png/Process1.png')   % 保存到工作目录下
 
 %% --------plot----------
 %-------------模型图-------------
@@ -90,4 +91,5 @@ quiver(x',y', cos(targetsSave.angle(1,:))',sin(targetsSave.angle(1,:))',0.3,'col
 hold on;
 
 legend([p1,p2,p3],["载机","导弹","目标"],'Location','northwest');
-print(figure2,'-dpng','-r300','./png/MoreProcess6.png')   % 保存到工作目录下
+xlabel("x/m");ylabel("y/m");
+print(figure2,'-dpng','-r300','./png/Process2.png')   % 保存到工作目录下
