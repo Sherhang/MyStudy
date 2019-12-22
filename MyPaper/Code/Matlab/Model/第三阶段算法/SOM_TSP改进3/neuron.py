@@ -43,7 +43,20 @@ def generate_network(cities, n, c=0):
         print(cities3.shape)
         ret = cities3 + 0.1*np.random.rand(cities.shape[0]*k, 2)
         ret = ret.values  # DataFrame转成np数组
-
+    if c == 4:
+        num = n // 4  # 每条边的个数
+        a = np.arange(num) / num
+        b = np.zeros(num)
+        c = np.ones(num)
+        a = a[:, np.newaxis]
+        b = b[:, np.newaxis]
+        c = c[:, np.newaxis]
+        ret = np.zeros(shape=(num * 4, 2))
+        ret[0:num, :] = np.concatenate((a, c), axis=1)  # 上边
+        ret[num:2 * num, :] = np.concatenate((c, a[::-1]), axis=1)  # 右边
+        ret[2 * num:3 * num, :] = np.concatenate((a[::-1], b),
+                                                 axis=1)  # 下边 https://www.cnblogs.com/yuxuanlian/p/numpy.html
+        ret[3 * num:4 * num, :] = np.concatenate((b, a), axis=1)  # 左边
     return ret  # 随机生成
 
 
@@ -73,6 +86,6 @@ def get_route(cities, network):
     cities['winner'] = cities[['x', 'y']].apply(
         lambda c: select_closest(network, c),
         axis=1, raw=True)
-    print('cities', cities)
+    # print('cities', cities)
 
     return cities.sort_values('winner').index

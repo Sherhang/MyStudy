@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.md": "bat",
+        "ostream": "cpp",
+        "iosfwd": "cpp"
+    }
+}

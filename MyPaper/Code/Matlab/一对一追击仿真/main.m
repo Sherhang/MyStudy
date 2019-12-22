@@ -1,32 +1,30 @@
-% 载机追击目标运动仿真
-clear;clc;
+% 载机追击目标运动仿真,载机最后应该向态势占优方向运动。直接追踪法。
+clear;
 % 初始参数---
-steps = 20000; % 步数
+steps = 50000; % 步数
+stepStop =0 ;
+step50 = 0;
 dT = 0.02; % 采样间隔
 T.p = 100*1000*0.7*[1 1];  % 目标, 从100km位置接近目标
 T.v = 300;
-T.a = 160*pi/180;  % 航向角
+T.a = 100*pi/180;  % 航向角
 M.p = [0 0];  % 载机
-M.v = 1.3*300;
-M.a = 0;
+M.v = 400;
+M.a = 30*pi/180;
 GOfFighter = 30.0 * 9.8; % 载机横向加速度最大值
 
 % 位置记录
-PM = zeros(steps,2);
-PT = zeros(steps,2);
+
 PM(1,:) = M.p;
 PT(1,:) = T.p;
-% 优势函数记录
-% fAdv = zeros(steps,1);
-% disAdv = fAdv;
-% angleAdv = fAdv;
-% inAngleAdv = fAdv;
-% speedAdv = fAdv;
 [fAdv(1),disAdv(1),angleAdv(1),inAngleAdv(1),speedAdv(1)] = getAdvance(M,T);
-%---------循环开始--------
+disSave(1) = sqrt((M.p(1)-T.p(1)).^2 + (M.p(2)-T.p(2)).^2);
+
+
+%% ---------循环开始--------
 for step=2:steps
     nextP = T.p;
-    theta = atan2((nextP(:,2)-M.p(:,2)), nextP(:,1)-M.p(:,1));% 方位角
+    theta = atan2((nextP(:,2)-M.p(:,2)), nextP(:,1)-M.p(:,1));% 方位角,第一种方案是让方位角等于这个值。
     % 航向修正，满足加速度限制
     omiga = GOfFighter./M.v;
     maxTheta = omiga * dT; % 最大转向
@@ -61,48 +59,74 @@ for step=2:steps
     PT(step,:) = T.p;
     % 计算距离
     dis = sqrt((M.p(1)-T.p(1)).^2 + (M.p(2)-T.p(2)).^2);
-    if dis >= 50*1000
-        stepStop = step;
-         [fAdv(step),disAdv(step),angleAdv(step),inAngleAdv(step),speedAdv(step)] = getAdvance(M,T);
-    end
+    [fAdv(step),disAdv(step),angleAdv(step),inAngleAdv(step),speedAdv(step)] = getAdvance(M,T);
     
-    if dis < 25*1000  % 距离小于100米停止移动
+    if dis >= 25*1000
+        step50 = step;
+         stepStop = step;
+    end
+    if dis < 25*1000 % 50*1000  % 距离小于100米停止移动
         M.v = 0;
         T.v = 0;
-%         fAdv(step)  = fAdv(step-1);
-%         speedAdv= ones(steps,1);
+       
+        break
     end
   
 end
-
-%----------plot---------
+sFighter = 400*dT*step50
+%% ----------plot---------
 figure1 = figure('color',[1 1 1]);
-plot(PM(:,1), PM(:,2),'r-');
+plot(PM(:,1), PM(:,2),'r-','LineWidth',1);
 hold on;
-plot(PT(:,1), PT(:,2), 'b--','MarkerIndices',1:1600:step );
-axis(1000*[0 120 0 120]);
+plot(PT(:,1), PT(:,2), 'b-.','MarkerIndices',1:1600:step,'LineWidth',1);
+% axis(1000*[0 120 0 120]);
 xlabel('x/m');
 ylabel('y/m');
+axis([ -40*1000 80*1000 0 250*1000]);
 legend('载机','目标');
 print(figure1,'-dpng','-r300','./png/fighterToTarget.png')   % 保存到工作目录下
 %-----优势函数图像变化
 figure2 = figure('color',[1 1 1]);
-plot(fAdv,'r-','MarkerIndices',1:1000:stepStop);hold on;
-plot(disAdv,'bx-','MarkerIndices',1:1000:stepStop);hold on;
-plot(angleAdv,'cs-','MarkerIndices',1:1000:stepStop); hold on;
-plot(inAngleAdv,'m-^','MarkerIndices',1:1000:stepStop);hold on;
-plot(speedAdv,'ko-','MarkerIndices',1:1000:stepStop); hold on;
-axis([1 stepStop -0.1 1.8]);
+plot(fAdv,'r-','MarkerIndices',1:1000:step50);hold on;
+plot(disAdv,'bx-','MarkerIndices',1:1000:step50);hold on;
+plot(angleAdv,'cs-','MarkerIndices',1:1000:step50); hold on;
+plot(inAngleAdv,'m-^','MarkerIndices',1:1000:step50);hold on;
+plot(speedAdv,'ko-','MarkerIndices',1:1000:step50); hold on;
+axis([1 step50 -0.1 1.8]);
 xlabel('step');
 ylabel('优势值');
-legend('总体优势','距离优势','方位角优势','进入角优势','速度优势');
-print(figure1,'-dpng','-r300','./png/advance.png')   % 保存到工作目录下
+legend('态势优势','距离优势','方位角优势','进入角优势','速度优势');
+print(figure2,'-dpng','-r300','./png/advance.png')   % 保存到工作目录下
 
 
 
-% 函数，参照../model/fimage.m
+
+%% 函数，参照../model/fimage.m
 % 一对一优势函数计算
 function [f,disAdv, angleAdvance, inAngleAdvance, speedAdv]  = getAdvance(M,T)
+% 距离优势
+dis = sqrt((M.p(1)-T.p(1)).^2 + (M.p(2)-T.p(2)).^2);
+disAdv = getDisAdvance(dis);
+% 方位角优势
+a = [cos(M.a), sin(M.a)]; % 载机方向向量
+b = [T.p(1)-M.p(1), T.p(2)-M.p(2) ];   % 载机目标视线角向量
+fai = acos(max(-1,min(1,dot(a,b)/(norm(a)*norm(b))))); % 方位角[0,pi]
+angleAdvance = getAngleAdvance(fai);
+% 进入角优势
+a = [cos(T.a), sin(T.a)]; % 目标方向向量
+b = [T.p(1)-M.p(1), T.p(2)-M.p(2) ];   % 载机目标视线角向量
+q = acos(max(-1,min(1,dot(a,b)/(norm(a)*norm(b)))));  % 进入角[0,pi]
+inAngleAdvance = getInAngleAdvance(q);
+% 角度优势
+angAdv = angleAdvance*inAngleAdvance;
+% 速度优势
+speedAdv = getSpeedAdvance(M.v/T.v);
+
+f = 0.4*disAdv + 0.3*angAdv + 0.3 *speedAdv;
+end
+function f = getMaxAdvance(M,T,alpha)  % 只要一个返回值，
+M.a = alpha;
+M.p = M.p + [M.v*cos(M.a), M.v*sin(M.a)];% 推算下时刻位置
 % 距离优势
 dis = sqrt((M.p(1)-T.p(1)).^2 + (M.p(2)-T.p(2)).^2);
 disAdv = getDisAdvance(dis);
@@ -122,14 +146,8 @@ angAdv = angleAdvance*inAngleAdvance;
 speedAdv = getSpeedAdvance(M.v/T.v);
 
 f = 0.4*disAdv + 0.3*angAdv + 0.3 *speedAdv;
+f = -f;
 end
-
-
-
-
-
-
-
 
 %----------载机的距离优势----------
 function f = getDisAdvance(d)

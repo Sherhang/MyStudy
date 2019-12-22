@@ -2,6 +2,7 @@ from sys import argv
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from io_helper import read_tsp, normalize
 from neuron import generate_network, get_neighborhood, get_route
@@ -15,15 +16,21 @@ def main():
 
     problem = read_tsp('assets/att48.tsp')  # 打开文件，problem是DataFrame格式
     # problem = pd.read_csv('assets/a280.csv', encoding='utf-8')  # 另一种方式，直接读入表格
-    print(problem)
+    # print(problem)
 
-    route = som(problem, 100000)   # 第二参数是迭代次数，route是list
+    route, dSave = som(problem, 10000)   # 第二参数是迭代次数，route是list
     np.savetxt('out_files\ route.txt', route, delimiter=',')
     print("route:", route)
-
     problem = problem.reindex(route)
-
     distance = route_distance(problem)
+    # 画出迭代曲线
+    fig = plt.figure()
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(dSave, color='red')
+    plt.savefig("./out_files/iter.png")
+    plt.show()
 
     print('Route found of length {}'.format(distance))
 
@@ -33,7 +40,7 @@ def som(problem, iterations, learning_rate=0.8):
 
     # Obtain the normalized set of cities (w/ coord in [0,1])
     cities = problem.copy()
-
+    dSave = np.zeros(iterations//100)   # 保存数据
     cities[['x', 'y']] = normalize(cities[['x', 'y']])  # 单位化
 
     # The population size is 8 times the number of cities   神经元个数
@@ -60,8 +67,11 @@ def som(problem, iterations, learning_rate=0.8):
         n = n * 0.9997
 
         # Check for plotting interval
-        if not i % 100:      # 每隔1000次画出神经元图像
-            plot_network(cities, network, name='out_files\process\city_network%d.png'%(i//100))
+        if not i % 100:      # 每隔1000次画出神经元图像, 求距离
+            plot_network(cities, network, name='out_files\process\city_network%d.png'%(i))
+            route = get_route(cities, network)
+            p = problem.reindex(route)
+            dSave[i//100] = route_distance(p)
 
         # Check if any parameter has completely decayed.
         if n < 1:
@@ -79,7 +89,7 @@ def som(problem, iterations, learning_rate=0.8):
 
     route = get_route(cities, network)
     plot_route(cities, route)
-    return route
+    return route, dSave
 
 if __name__ == '__main__':
     main()

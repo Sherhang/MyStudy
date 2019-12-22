@@ -7,7 +7,7 @@ city(2:obj.numOfTargets+1,:) = obj.Targets.p;
 fprintf("最短路径长度为%f\n", fTSPBest);
 
 % plot
-% figure3 = figure('color',[1 1 1]);
+ figure3 = figure('color',[1 1 1]);
 P=city;N=obj.numOfTargets+1;minplan=xTSPBest;
 pp1 = plot(P(1,1),P(1,2),'rp','MarkerFaceColor','r');hold on;
 pp2 = plot(P(2:N,1),P(2:N,2),'r^','MarkerFaceColor','r');hold on;
@@ -17,4 +17,4 @@ end
 line([P(minplan(1),1),P(minplan(N),1)],[P(minplan(1),2),P(minplan(N),2)],'color','k');
 xlabel("x/m");ylabel("y/m");
 legend([pp1,pp2],["出发点","侦查点"],'Location','northwest');
-print(figure3,'-dpng','-r300','./png/Investigate.png')   % 保存到工作目录下
+print(figure3,'-dpng','-r300','./png/InvestigateMidle.png')   % 保存到工作目录下

@@ -37,6 +37,6 @@ def get_route(cities, network):
     cities['winner'] = cities[['x', 'y']].apply(
         lambda c: select_closest(network, c),
         axis=1, raw=True)
-    print('cities',cities)
+    # print('cities',cities)
 
     return cities.sort_values('winner').index

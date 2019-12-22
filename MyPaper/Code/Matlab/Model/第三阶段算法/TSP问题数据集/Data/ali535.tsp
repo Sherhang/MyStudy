@@ -1,5 +1,4 @@
 NAME: ali535
-TYPE: TSP
 COMMENT: 535 Airports around the globe (Padberg/Rinaldi)
 DIMENSION: 535
 EDGE_WEIGHT_TYPE: GEO

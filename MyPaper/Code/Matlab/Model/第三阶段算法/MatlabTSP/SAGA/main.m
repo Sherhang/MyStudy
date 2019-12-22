@@ -5,9 +5,9 @@
 clear
 clc
 tic;
-a = 0.9;       %温度衰减函数的参数,一般文献取0.9以上
-t0 = 100;        %初始温度
-tf = 0.1;         %终止温度
+a = 0.95;       %温度衰减函数的参数,一般文献取0.9以上
+t0 = 1000;        %初始温度
+tf = 0.01;         %终止温度
 t = t0;
 flag=0;
 Markov_length =6000;  %Markov链长度
@@ -174,7 +174,7 @@ city144=[3639	1315;
     3470	3304;];%中国144城市相对坐标，最小距离为30347，蚁群优化算法数据为30380
 
 city=city144;
-city = read_tsp('Data/att48.tsp');
+% city = read_tsp('Data/att48.tsp');
 amount=size(city,1);
 num=10; %种群数量
 for i=1:amount
@@ -303,7 +303,7 @@ path=TSPpath_decode( sol_bestofAll(noft,:));
 % disp('最优解为:');
 % disp(path);
 disp('最短距离:');
-disp(E_bestofAll(noft));
+fprintf('%f',E_bestofAll(noft));
 
 figure(1)
 P=city;N=amount;minplan=path;

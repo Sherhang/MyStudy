@@ -155,11 +155,11 @@ city144=[3639	1315;
     3470	3304;];%中国144城市相对坐标，最小距离为30347，蚁群优化算法数据为30380
 C = city144; % 选择数据集
 
-
-Nc_max=200;%最大循环次数，即算法迭代的次数，亦即蚂蚁出动的拨数（每拨蚂蚁的数量当然都是m）
+tic;
+Nc_max=100;%最大循环次数，即算法迭代的次数，亦即蚂蚁出动的拨数（每拨蚂蚁的数量当然都是m）
 alpha=0.1;%蚂蚁在运动过程中所积累信息（即信息素）在蚂蚁选择路径时的相对重要程度，alpha过大时，算法迭代到一定代数后将出现停滞现象
 beta=10;%启发式因子在蚂蚁选择路径时的相对重要程度
-rho=0.5;%0<rho<1,表示路径上信息素的衰减系数（亦称挥发系数、蒸发系数），1-rho表示信息素的持久性系数
+rho=0.6;%0<rho<1,表示路径上信息素的衰减系数（亦称挥发系数、蒸发系数），1-rho表示信息素的持久性系数
 Q=100;%蚂蚁释放的信息素量，对本算法的性能影响不大
 
 
@@ -257,11 +257,12 @@ Nc=Nc+1;
   tabu_list=zeros(m,n);
 end 
 
-
+toc
 %输出结果，绘制图形
 position=find(length_best==min(length_best));
-shortest_path=routh_best(position(1),:)
-shortest_length=length_best(position(1))
+shortest_path=routh_best(position(1),:);
+shortest_length=length_best(position(1));
+fprintf('%f',shortest_length);
 %绘制最短路径
 figure(1)
 
