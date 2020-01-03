@@ -4,8 +4,8 @@ bn=size(s,2);
 scro(1,:)=s(seln(1),:);
 scro(2,:)=s(seln(2),:);
 if rand<pc %根据交叉概率决定是否进行交叉操作
-   c1=round(rand*(bn-2))+1;  %在[1,bn-1]范围内随机产生一个交叉位
-   c2=round(rand*(bn-2))+1;
+   c1=round(rand*(bn-2))+1  %在[1,bn-1]范围内随机产生一个交叉位
+   c2=round(rand*(bn-2))+1
    chb1=min(c1,c2);
    chb2=max(c1,c2);
    middle=scro(1,chb1+1:chb2);

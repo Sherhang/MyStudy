@@ -9,7 +9,7 @@ def generate_network(size):
     Return a vector of two dimensional points in the interval [0,1].
     生成一个[神经元个数，2]的np数组
     """
-    return np.random.rand(size, 2)
+    return np.random.rand(size, 2)  # 随机生成
 
 def get_neighborhood(center, radix, domain):
     """Get the range gaussian of given radix around a center index.

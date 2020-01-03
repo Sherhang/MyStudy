@@ -1,6 +1,5 @@
-clear
-clc
-N=5;%½×Êý
+
+N=3;%½×Êý
 for i=1:N
     for j=1:N
         x(N*i-N+j)=i;
@@ -31,7 +30,7 @@ end
 %
 M=N*N;
 figure(1);
-title('n=5');
+title('n=3');
 set(gcf,'color','w');
 for i=1:M
     for j=1:M

@@ -30,7 +30,7 @@ for step=1:steps
   for i =1:N
     fprintf('第%d轮第%d维数据\n',step,i);
     w=10*rand(i,i);  
-    % 拍卖
+    %% 拍卖
      t1=clock;  
      [plan,~,~,flag(i)] = auction( w,10000*i,0.1/(i+1),0) ;  % 拍卖误差0.01/i
      t2=clock;
@@ -48,7 +48,7 @@ for step=1:steps
     time_auction(i)=time_auction(i)*(step-1)/step+etime(t2,t1)/step;  % 单位秒,算steps次平均时间
     val_auction(i)=sum;  %取最后依次的结果
     %plan_auction(i,1:i)=plan;
-    % 匈牙利
+    %% 匈牙利
     t1=clock;
     plan = munkres(10-w);
     t2=clock;
@@ -59,7 +59,7 @@ for step=1:steps
     time_munkres(i)=time_munkres(i)*(step-1)/step+etime(t2,t1)/step;  % 单位秒,算steps次平均时间
     val_munkres(i)=sum;  %取最后依次的结果
     %plan_munkres(i,1:i)=plan;
-    % 量子规划
+    %% 量子规划
     t1=clock;
     plan = q_min_assign(10- w+0.000001*rand(i,i));
     t2=clock;
@@ -70,7 +70,7 @@ for step=1:steps
     time_q(i)=time_q(i)*(step-1)/step+etime(t2,t1)/step;  % 单位秒,算steps次平均时间
     val_q(i)=sum;  %取最后依次的结果
     %plan_q(i,1:i)=plan;
-    % 标准值
+    %% 标准值
     t1=clock;
     plan = base_min_assign(10- w+0.000001*rand(i,i));
     t2=clock;
@@ -85,9 +85,11 @@ for step=1:steps
 end
 
 
+
+
 %保存数据，谨慎使用
-save time_and_val.mat ...
-    time_auction val_auction time_munkres val_munkres time_q val_q time_base val_base flag
+% save time_and_val.mat ...
+%     time_auction val_auction time_munkres val_munkres time_q val_q time_base val_base flag
 % plot
 figure(1)
 plot(time_base,'r');

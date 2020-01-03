@@ -9,7 +9,7 @@ fprintf(fid,datestr(t));
 fprintf(fid,'\n');
 fclose(fid); 
 
-N=500; %测试维度1-1000
+N=200; %测试维度1-1000
 steps=10; %每个算法重复调用次数
 
 time_auction=zeros(1,N);
@@ -58,7 +58,7 @@ end
 
 
 %保存数据，谨慎使用
-save time_and_val.mat time_auction val_auction time_munkres val_munkres 
+% save time_and_val.mat time_auction val_auction time_munkres val_munkres 
 % plot
 figure(1)
 plot(time_auction,'g');

@@ -1,6 +1,8 @@
 from sys import argv
 
 import numpy as np
+import pandas as pd
+import time
 
 from io_helper import read_tsp, normalize
 from neuron import generate_network, get_neighborhood, get_route
@@ -8,16 +10,20 @@ from distance import select_closest, euclidean_distance, route_distance
 from plot import plot_network, plot_route
 
 def main():
+    time1 = time.time()
     #if len(argv) != 2:       # deleted by EE526
      #   print("inCorrect use: python src/main.py <filename>.tsp")
       #  return -1
 
-    problem = read_tsp('assets\mytest_bier127.tsp')  # 打开文件，problem是DataFrame格式
-    print(problem)
+    problem = read_tsp('assets\qa194.tsp')  # 打开文件，problem是DataFrame格式
+    problem = pd.read_csv('assets\china.csv',encoding='gbk')  # 另一种方式，直接读入表格
+    # print(problem)
 
-    route = som(problem, 100000)   # 第二参数是迭代次数，route是list
+    route = som(problem, 10000)   # 第二参数是迭代次数，route是list
     np.savetxt('out_files\ route.txt', route, delimiter=',')
-    print("route:", route)
+    time2 = time.time()
+    print('Running time: %s Seconds' % (time2 - time1))
+    # print("route:", route)
 
     problem = problem.reindex(route)
 
@@ -32,10 +38,10 @@ def som(problem, iterations, learning_rate=0.8):
     # Obtain the normalized set of cities (w/ coord in [0,1])
     cities = problem.copy()
 
-    cities[['x', 'y']] = normalize(cities[['x', 'y']])
+    cities[['x', 'y']] = normalize(cities[['x', 'y']])  # 单位化
 
     # The population size is 8 times the number of cities   神经元个数
-    n = cities.shape[0] * 8
+    n = cities.shape[0] * 3
     #n = cities.shape[0] * 3   # 测试用，by EE526
 
     # Generate an adequate network of neurons:
@@ -55,11 +61,11 @@ def som(problem, iterations, learning_rate=0.8):
                                                                                # 实际上就是为了让对应的移动乘以对应的坐标
         # Decay the variables
         learning_rate = learning_rate * 0.99997
-        n = n * 0.9997
+        n = n * 0.9998
 
         # Check for plotting interval
-        if not i % 1000:      # 每隔1000次画出神经元图像
-            plot_network(cities, network, name='out_files\process\city_network%d.png'%(i//1000))
+        if not i % 100:      # 每隔100次画出神经元图像
+            plot_network(cities, network, name='out_files\process\city_network%d.png'%(i//100))
 
         # Check if any parameter has completely decayed.
         if n < 1:

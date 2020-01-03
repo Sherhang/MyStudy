@@ -1,4 +1,4 @@
-clc;clear;
+
 N=10;
 %************* 威胁矩阵与毁伤概率
     Fx=200000*rand(1,N)';
@@ -48,8 +48,9 @@ fprintf('10次分支定界法找出方案数为%d\n',num3);
 
 figure(3);%量子云图
 
-title('量子云图');
+
 set(gcf,'color','w');
+set(gca,'box','on')
 %figure('color',[1 1 1]);
 for i=1:N
     for j=1:N

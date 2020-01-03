@@ -26,7 +26,7 @@ smnew=zeros(inn,CityNum);
 while gn<gnmax+1
    for j=1:2:inn
       seln=sel(p);  %选择操作
-      scro=cro(s,seln,pc);  %交叉操作
+      scro=cro(s,seln, );  %交叉操作
       scnew(j,:)=scro(1,:);
       scnew(j+1,:)=scro(2,:);
       smnew(j,:)=mut(scnew(j,:),pm);  %变异操作

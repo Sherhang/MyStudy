@@ -232,3 +232,27 @@ aim-120 参数来源
 
 [link]( https://link.springer.com/content/pdf/10.1023%2FA%3A1006529012972.pdf )
 
+### 35 模拟退火算法机理研究
+
+[link]( https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFD2004&filename=TJDZ200406022&uid=WEEvREcwSlJHSldRa1FhdXNXaEhoRGErRks4VXpqNnVUMGRtRWgzUlNxVT0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MjE2NDhaZVpwRnluZ1Y3N1BNU2ZQZExHNEh0WE1xWTlIWm9SOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVJMT2U= )
+
+### 36  基于蚁群选择超启发算法的低碳选址-路径研究 
+
+[link]( https://kns.cnki.net/KCMS/detail/11.5946.TP.20181026.1708.044.html )
+
+超启发算法部分参考
+
+### 37  基于进化匈牙利算法的目标分配问题研究及应用 
+
+硕士论文，部分可参考
+
+### 38  匈牙利算法及其推广 
+
+硕士论文，数学系，数学部分证明可参考。
+
+### 39 基于强化学习的旅行商问题解构造方法
+
+里面的文献之类可以参考
+
+### 40 Ahmad-Kim2015_Article_AnExtendedSelf-OrganizingMapBa.pdf
+
