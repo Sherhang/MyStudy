@@ -2,12 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-d  = np.zeros(100)
+d = np.zeros(100)
 # algos = [tspsom, Mtspsom, Stspsom, Ctspsom, Dtspsom, ICtspsom, IDtspsom]
 for i in range(100):
-    d[i]=i+1
-
-
+    d[i] = i + 1
 
 print(np.min((-1, 2)))
 fig = plt.figure()

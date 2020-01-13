@@ -2,48 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="056fccab-e7b0-42ec-a441-cc6aaf39eb63" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/GAself/GAbyself.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/GAself/GAbyself.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/GAself/Untitled6.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/GAself/Untitled6.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/GAself/cross.m" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/GAself/crossover_OX1.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/GAself/crossover_OX1.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/模拟退火/TSPpath_decode.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/模拟退火/TSPpath_decode.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/模拟退火/main.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/模拟退火/main.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/群_模拟退火/Untitled.m" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/群_模拟退火/Untitled14.m" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/群_模拟退火/main.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/群_模拟退火/main.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/群_模拟退火/test.m" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/蚁群/main.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/蚁群/main.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/TSP问题/蚁群/新建 DOCX 文档.docx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/算法汇总与比较/四种算法比较/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/算法汇总与比较/四种算法比较/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/算法汇总与比较/四种算法比较/main.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/算法汇总与比较/四种算法比较/main.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/算法汇总与比较/拍卖和匈牙利算法比较/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/算法汇总与比较/拍卖和匈牙利算法比较/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/算法汇总与比较/拍卖和匈牙利算法比较/main.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/算法汇总与比较/拍卖和匈牙利算法比较/main.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/量子规划算法MATLAB2015之后版本linintprog/量子规划第四版_可以求得多个最优方案的算法/扰动法和测量法比较/main.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/量子规划算法MATLAB2015之后版本linintprog/量子规划第四版_可以求得多个最优方案的算法/扰动法和测量法比较/main.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/量子规划算法MATLAB2015之后版本linintprog/量子规划第四版_可以求得多个最优方案的算法/扰动法和测量法比较/quantum_entanglement.m" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MATLAB/问题分类/任务分配/指派问题/量子规划算法MATLAB2015之后版本linintprog/量子规划第四版_可以求得多个最优方案的算法/扰动法和测量法比较/quantum_entanglement.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/MatlabTSP/ILS局部迭代搜索，最好的算法/opt_rl1304.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/MatlabTSP/ILS局部迭代搜索，最好的算法/opt_rl1304.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/MatlabTSP/ILS局部迭代搜索，最好的算法/rl1304.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/MatlabTSP/ILS局部迭代搜索，最好的算法/rl1304.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/SOM_TSP不同数据集比较/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/SOM_TSP不同数据集比较/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/SOM_TSP改进3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/SOM_TSP改进3/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/SOM_TSP算法比较/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/Model/第三阶段算法/SOM_TSP算法比较/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/一对一追击仿真/pngPNG/advancePNG.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/一对一追击仿真/pngPNG/advancePNG.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/一对一追击仿真/pngPNG/fighterToTargetPNG.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MyPaper/Code/Matlab/一对一追击仿真/pngPNG/fighterToTargetPNG.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/assets/city144.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/assets/city144.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/neuron.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/neuron.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/ route.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/ route.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/ route.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/ route.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/city_network.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/city_network.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network20.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network20.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network21.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network21.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network22.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network22.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network23.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network23.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network24.png" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/out_files/process/city_network24.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../SOM算法/som_TSP/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../SOM算法/som_TSP/plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../StudyNote/PaperNote.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../StudyNote/PaperNote.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../StudyNote/paper.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../StudyNote/paper.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -68,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
-              <caret line="2" column="31" lean-forward="true" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
+            <state relative-caret-position="81">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -98,6 +57,7 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find />
+      <find>plt</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -111,7 +71,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="386" />
     <option name="y" value="3" />
     <option name="width" value="936" />
@@ -217,7 +177,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1096" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16227607" />
@@ -259,8 +219,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="2" column="31" lean-forward="true" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
+        <state relative-caret-position="81">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
